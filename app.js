@@ -490,7 +490,7 @@
 
   // Configuración App
   const AppConfig = {
-    version: "2.0.0", // Versión estable 2.0.0
+    version: "2.1", // Versión 2.1
     aiFlows: [
       {
         key: "correccion",
@@ -1743,7 +1743,7 @@
     if (!app.innerHTML.trim()) {
         Logger.debug('#app está vacío, renderizando estructura completa.');
         const baseHTML = `
-            <h1 style="text-align: center; margin: 20px 0; color: #2c3e50;">Suite Neurología v2.0.0 (Stable)</h1>
+            <h1 style="text-align: center; margin: 20px 0; color: #2c3e50;">Suite Neurologia v2.1</h1>
             <div id="sections-container"></div>
         `;
         app.innerHTML = baseHTML;
