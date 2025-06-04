@@ -1,4 +1,4 @@
-# 🧪 Sistema de Testing - Suite Neurología v2.0.0
+# 🧪 Sistema de Testing - Suite Neurología 2.1
 
 ## Descripción General
 

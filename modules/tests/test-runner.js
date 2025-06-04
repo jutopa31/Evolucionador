@@ -1,5 +1,5 @@
 /**
- * @fileoverview Sistema de Testing para Suite Neurología v2.0.0
+ * @fileoverview Sistema de Testing para Suite Neurología 2.1
  * @version 1.0.0
  */
 
@@ -73,7 +73,7 @@ export class TestRunner {
    * @returns {Promise<Object>} - Resultados de los tests
    */
   async run(options = {}) {
-    console.log('🧪 Iniciando Suite de Tests - Suite Neurología v2.0.0');
+    console.log('🧪 Iniciando Suite de Tests - Suite Neurología 2.1');
     console.log('=' .repeat(60));
 
     // Ejecutar setup
