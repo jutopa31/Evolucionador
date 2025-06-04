@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Funciones Restauradas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        button { margin: 5px; padding: 8px 12px; }
+        textarea { width: 100%; height: 100px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test - Funciones Restauradas</h1>
+    
+    <div class="test-section">
+        <h2>📋 Test Plantillas Examen Físico</h2>
+        <div>
+            <button data-action="addFisicoTemplate" data-tpl="ef_neuro">🧠 Neuro</button>
+            <button data-action="addFisicoTemplate" data-tpl="ef_cardio">❤️ Cardio</button>
+            <button data-action="addFisicoTemplate" data-tpl="resp">🫁 Resp</button>
+        </div>
+        <textarea id="ta-fisico-test" placeholder="Las plantillas aparecerán aquí..."></textarea>
+        <div id="template-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📷 Test OCR</h2>
+        <div>
+            <button id="ocr-upload-btn-test">📷 OCR</button>
+            <input type="file" id="ocr-file-input-test" accept="image/*,application/pdf" style="display: none;">
+        </div>
+        <textarea id="ta-notas_libres-test" placeholder="El texto extraído aparecerá aquí..."></textarea>
+        <div id="ocr-status"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📊 Resultados</h2>
+        <div id="results">
+            <p>Ejecutando tests...</p>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.5/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="plantillas-examen-fisico.js"></script>
+    
+    <script>
+        // Simular funciones necesarias
+        function logDebug(...args) {
+            console.log('[DEBUG]', ...args);
+        }
+        
+        function insertAtCursor(textarea, text) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const currentText = textarea.value;
+            textarea.value = currentText.slice(0, start) + text + currentText.slice(end);
+            textarea.selectionStart = textarea.selectionEnd = start + text.length;
+            textarea.focus();
+            textarea.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        
+        // Simular appState
+        window.appState = {
+            getCurrentBedId: () => 'test',
+            processingOCR: false
+        };
+        
+        // Simular getTextArea
+        function getTextArea(key, bedId) {
+            return document.getElementById(`ta-${key}-${bedId}`);
+        }
+        
+        // Simular AppConfig
+        window.AppConfig = {
+            ocrConfig: {
+                supportedTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+                maxFileSize: 10 * 1024 * 1024
+            }
+        };
+        
+        // Simular ErrorUI
+        window.ErrorUI = {
+            showError: (msg) => {
+                document.getElementById('ocr-status').innerHTML = `<span class="error">❌ ${msg}</span>`;
+            },
+            showSuccess: (msg) => {
+                document.getElementById('ocr-status').innerHTML = `<span class="success">✅ ${msg}</span>`;
+            },
+            showInfo: (msg) => {
+                document.getElementById('ocr-status').innerHTML = `<span>ℹ️ ${msg}</span>`;
+            }
+        };
+        
+        // Test de plantillas
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('[data-action="addFisicoTemplate"]')) {
+                e.preventDefault();
+                const templateKey = e.target.dataset.tpl;
+                if (templateKey && window.FISICO_TEMPLATES && window.FISICO_TEMPLATES[templateKey]) {
+                    const textarea = document.getElementById('ta-fisico-test');
+                    if (textarea) {
+                        const templateText = window.FISICO_TEMPLATES[templateKey];
+                        insertAtCursor(textarea, templateText + "\n\n");
+                        document.getElementById('template-status').innerHTML = 
+                            `<span class="success">✅ Plantilla ${templateKey} insertada</span>`;
+                    }
+                } else {
+                    document.getElementById('template-status').innerHTML = 
+                        `<span class="error">❌ Plantilla ${templateKey} no encontrada</span>`;
+                }
+            }
+        });
+        
+        // Test de OCR
+        document.getElementById('ocr-upload-btn-test').addEventListener('click', () => {
+            document.getElementById('ocr-file-input-test').click();
+        });
+        
+        document.getElementById('ocr-file-input-test').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                processOCRFile(file, 'test');
+            }
+        });
+        
+        // Función de procesamiento OCR simplificada
+        const processOCRFile = (file, bedId) => {
+            if (!file) return Promise.reject(new Error("No se proporcionó archivo"));
+            
+            if (!AppConfig.ocrConfig.supportedTypes.includes(file.type)) {
+                window.ErrorUI.showError("Tipo de archivo no soportado. Use JPG, PNG o PDF.");
+                return Promise.reject(new Error("Tipo de archivo no soportado"));
+            }
+            
+            if (file.size > AppConfig.ocrConfig.maxFileSize) {
+                window.ErrorUI.showError("El archivo es demasiado grande. Máximo 10MB.");
+                return Promise.reject(new Error("Archivo demasiado grande"));
+            }
+            
+            window.ErrorUI.showInfo("Procesando archivo...");
+            
+            // Para imágenes, usar Tesseract.js
+            if (file.type.startsWith('image/')) {
+                return Tesseract.recognize(file, 'spa', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            window.ErrorUI.showInfo(`Procesando: ${Math.round(m.progress * 100)}%`);
+                        }
+                    }
+                })
+                .then(result => {
+                    const textarea = document.getElementById(`ta-notas_libres-${bedId}`);
+                    if (textarea) {
+                        textarea.value = result.data.text;
+                        window.ErrorUI.showSuccess("Texto extraído exitosamente");
+                    }
+                    return result.data.text;
+                })
+                .catch(error => {
+                    window.ErrorUI.showError(`Error procesando archivo: ${error.message}`);
+                    throw error;
+                });
+            } else {
+                window.ErrorUI.showError("Procesamiento de PDF no implementado en esta prueba");
+                return Promise.reject(new Error("PDF no soportado en prueba"));
+            }
+        };
+        
+        // Verificar que todo esté cargado
+        document.addEventListener('DOMContentLoaded', () => {
+            const results = document.getElementById('results');
+            let html = '<h3>Estado de las funciones:</h3><ul>';
+            
+            // Verificar plantillas
+            if (window.FISICO_TEMPLATES) {
+                html += '<li class="success">✅ Plantillas del examen físico cargadas</li>';
+                html += `<li>📋 Plantillas disponibles: ${Object.keys(window.FISICO_TEMPLATES).join(', ')}</li>`;
+            } else {
+                html += '<li class="error">❌ Plantillas del examen físico NO cargadas</li>';
+            }
+            
+            // Verificar Tesseract
+            if (window.Tesseract) {
+                html += '<li class="success">✅ Tesseract.js cargado (OCR disponible)</li>';
+            } else {
+                html += '<li class="error">❌ Tesseract.js NO cargado</li>';
+            }
+            
+            // Verificar PDF.js
+            if (window.pdfjsLib) {
+                html += '<li class="success">✅ PDF.js cargado</li>';
+            } else {
+                html += '<li class="error">❌ PDF.js NO cargado</li>';
+            }
+            
+            html += '</ul>';
+            html += '<p><strong>Instrucciones:</strong></p>';
+            html += '<ul>';
+            html += '<li>Haz clic en los botones de plantillas para probar la inserción de texto</li>';
+            html += '<li>Usa el botón OCR para subir una imagen y extraer texto</li>';
+            html += '</ul>';
+            
+            results.innerHTML = html;
+        });
+    </script>
+</body>
+</html> 

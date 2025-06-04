@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Suite Neurología v2.1.0 - Versión Simplificada</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .version-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .version-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 1.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .version-btn:hover {
+            border-color: #007bff;
+            background: #e3f2fd;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+        }
+        
+        .version-icon {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .version-title {
+            display: block;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .version-desc {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .simple-version-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .app-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .note-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 2rem;
+            border: 1px solid #e0e0e0;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #555;
+            font-size: 1.1rem;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+        
+        .actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-1px);
+        }
+        
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        @media (max-width: 768px) {
+            .version-buttons {
+                flex-direction: column;
+            }
+            
+            .actions {
+                justify-content: center;
+            }
+            
+            .simple-version-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Modal de selección de versión -->
+        <div id="version-splash" class="modal-overlay">
+            <div class="modal-content">
+                <h2>🧠 ¿Qué versión de evolución desea utilizar?</h2>
+                <div class="version-buttons">
+                    <button id="version-simple" class="version-btn">
+                        <span class="version-icon">📝</span>
+                        <span class="version-title">Versión Simple</span>
+                        <span class="version-desc">Nota libre en un solo campo (recomendado)</span>
+                    </button>
+                    <button id="version-compleja" class="version-btn">
+                        <span class="version-icon">📋</span>
+                        <span class="version-title">Versión Compleja</span>
+                        <span class="version-desc">Secciones estructuradas con funciones avanzadas</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🧠 Suite Neurología v2.1.0 - Versión Simplificada');
+        
+        // Variables globales
+        let modal, simpleBtn, complexBtn, app;
+        
+        // Función para inicializar elementos
+        function initializeElements() {
+            modal = document.getElementById('version-splash');
+            simpleBtn = document.getElementById('version-simple');
+            complexBtn = document.getElementById('version-compleja');
+            app = document.getElementById('app');
+            
+            console.log('🔍 Elementos encontrados:', {
+                modal: !!modal,
+                simpleBtn: !!simpleBtn,
+                complexBtn: !!complexBtn,
+                app: !!app
+            });
+            
+            return modal && simpleBtn && complexBtn && app;
+        }
+        
+        // Función para mostrar versión simple
+        function showSimpleVersion(event) {
+            console.log('📝 CLICK DETECTADO - Cargando versión simple...');
+            
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Guardar preferencia
+            localStorage.setItem('selectedVersion', 'simple');
+            
+            // Ocultar modal
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            // Mostrar interfaz simple
+            if (app) {
+                app.innerHTML = `
+                    <div class="simple-version-container">
+                        <h1 class="app-title">📝 Suite Neurología - Versión Simple</h1>
+                        <div class="note-container">
+                            <label for="simple-note">Nota de Evolución:</label>
+                            <textarea 
+                                id="simple-note" 
+                                placeholder="Escriba aquí la nota de evolución del paciente...&#10;&#10;Ejemplo:&#10;Paciente de 65 años con antecedente de hipertensión arterial...&#10;Examen físico: Consciente, orientado...&#10;Plan: Continuar tratamiento actual..."
+                            ></textarea>
+                            <div class="actions">
+                                <button id="copy-note" class="btn-primary">
+                                    📋 Copiar Nota
+                                </button>
+                                <button id="clear-note" class="btn-secondary">
+                                    🗑️ Limpiar
+                                </button>
+                                <button id="change-version" class="btn-success">
+                                    🔄 Cambiar Versión
+                                </button>
+                            </div>
+                            <div id="status-message" style="display: none;"></div>
+                        </div>
+                    </div>
+                `;
+                
+                setupSimpleVersionListeners();
+                loadSavedNote();
+                console.log('✅ Versión simple cargada correctamente');
+            }
+        }
+        
+        // Función para mostrar versión compleja
+        function showComplexVersion(event) {
+            console.log('📋 CLICK DETECTADO - Cargando versión compleja...');
+            
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
+            // Guardar preferencia
+            localStorage.setItem('selectedVersion', 'complex');
+            
+            // Ocultar modal
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            // Redirigir a la versión completa
+            window.location.href = 'index.html';
+        }
+        
+        // Configurar listeners para versión simple
+        function setupSimpleVersionListeners() {
+            const textarea = document.getElementById('simple-note');
+            const copyBtn = document.getElementById('copy-note');
+            const clearBtn = document.getElementById('clear-note');
+            const changeBtn = document.getElementById('change-version');
+            const statusDiv = document.getElementById('status-message');
+            
+            // Auto-guardar
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    localStorage.setItem('simple-note-content', textarea.value);
+                    showStatus('💾 Guardado automáticamente', 'info');
+                });
+            }
+            
+            // Copiar nota
+            if (copyBtn && textarea) {
+                copyBtn.addEventListener('click', function() {
+                    const text = textarea.value.trim();
+                    if (text) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyBtn.innerHTML = '✅ ¡Copiado!';
+                            showStatus('📋 Nota copiada al portapapeles', 'success');
+                            setTimeout(() => {
+                                copyBtn.innerHTML = '📋 Copiar Nota';
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Error al copiar:', err);
+                            showStatus('❌ Error al copiar al portapapeles', 'error');
+                        });
+                    } else {
+                        showStatus('⚠️ No hay texto para copiar', 'info');
+                    }
+                });
+            }
+            
+            // Limpiar nota
+            if (clearBtn && textarea) {
+                clearBtn.addEventListener('click', function() {
+                    if (confirm('¿Está seguro de que desea limpiar la nota?')) {
+                        textarea.value = '';
+                        localStorage.removeItem('simple-note-content');
+                        textarea.focus();
+                        showStatus('🗑️ Nota limpiada', 'info');
+                    }
+                });
+            }
+            
+            // Cambiar versión
+            if (changeBtn) {
+                changeBtn.addEventListener('click', function() {
+                    if (modal) {
+                        modal.style.display = 'flex';
+                    }
+                });
+            }
+            
+            function showStatus(message, type) {
+                if (statusDiv) {
+                    statusDiv.textContent = message;
+                    statusDiv.className = 'status-message status-' + type;
+                    statusDiv.style.display = 'block';
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 3000);
+                }
+            }
+        }
+        
+        // Cargar nota guardada
+        function loadSavedNote() {
+            const savedNote = localStorage.getItem('simple-note-content');
+            const textarea = document.getElementById('simple-note');
+            if (savedNote && textarea) {
+                textarea.value = savedNote;
+                console.log('📄 Nota guardada cargada');
+            }
+        }
+        
+        // Función para configurar event listeners
+        function setupEventListeners() {
+            console.log('🔧 Configurando event listeners...');
+            
+            // Múltiples métodos para asegurar que los clics funcionen
+            if (simpleBtn) {
+                // Método 1: addEventListener
+                simpleBtn.addEventListener('click', showSimpleVersion);
+                
+                // Método 2: onclick directo
+                simpleBtn.onclick = showSimpleVersion;
+                
+                // Método 3: mousedown como backup
+                simpleBtn.addEventListener('mousedown', function(e) {
+                    console.log('🖱️ Mousedown detectado en botón simple');
+                    setTimeout(() => showSimpleVersion(e), 10);
+                });
+                
+                console.log('✅ Event listeners configurados para botón simple');
+            } else {
+                console.error('❌ No se encontró el botón simple');
+            }
+            
+            if (complexBtn) {
+                // Método 1: addEventListener
+                complexBtn.addEventListener('click', showComplexVersion);
+                
+                // Método 2: onclick directo
+                complexBtn.onclick = showComplexVersion;
+                
+                // Método 3: mousedown como backup
+                complexBtn.addEventListener('mousedown', function(e) {
+                    console.log('🖱️ Mousedown detectado en botón complejo');
+                    setTimeout(() => showComplexVersion(e), 10);
+                });
+                
+                console.log('✅ Event listeners configurados para botón complejo');
+            } else {
+                console.error('❌ No se encontró el botón complejo');
+            }
+        }
+        
+        // Función principal de inicialización
+        function initializeApp() {
+            console.log('📋 Inicializando aplicación...');
+            
+            if (!initializeElements()) {
+                console.error('❌ No se pudieron encontrar todos los elementos necesarios');
+                return;
+            }
+            
+            setupEventListeners();
+            
+            // Verificar si hay una versión guardada
+            const savedVersion = localStorage.getItem('selectedVersion');
+            if (savedVersion === 'simple') {
+                console.log('📝 Versión simple guardada detectada, cargando...');
+                setTimeout(showSimpleVersion, 100);
+            } else {
+                console.log('🔍 Mostrando modal de selección de versión');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            }
+            
+            console.log('✅ Aplicación inicializada correctamente');
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            // DOM ya está cargado
+            initializeApp();
+        }
+        
+        // También intentar inicializar después de un pequeño delay
+        setTimeout(initializeApp, 100);
+        
+        // Funciones globales para debugging
+        window.resetApp = function() {
+            console.log('🔄 Reseteando aplicación...');
+            localStorage.clear();
+            location.reload();
+        };
+        
+        window.showModal = function() {
+            console.log('👁️ Mostrando modal...');
+            const modal = document.getElementById('version-splash');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        };
+        
+        window.testSimple = function() {
+            console.log('🧪 Probando versión simple...');
+            showSimpleVersion();
+        };
+        
+        window.testComplex = function() {
+            console.log('🧪 Probando versión compleja...');
+            showComplexVersion();
+        };
+        
+        // Debugging adicional
+        window.debugElements = function() {
+            console.log('🔍 Estado de elementos:', {
+                modal: document.getElementById('version-splash'),
+                simpleBtn: document.getElementById('version-simple'),
+                complexBtn: document.getElementById('version-compleja'),
+                app: document.getElementById('app')
+            });
+        };
+        
+        console.log('🎯 Aplicación lista. Funciones disponibles:');
+        console.log('- resetApp() - Resetear aplicación');
+        console.log('- showModal() - Mostrar modal');
+        console.log('- testSimple() - Probar versión simple');
+        console.log('- testComplex() - Probar versión compleja');
+        console.log('- debugElements() - Ver estado de elementos');
+    </script>
+</body>
+</html> 

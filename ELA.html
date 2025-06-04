@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Escalas de ELA (Diagnóstico)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Inter', Arial, sans-serif;
+      --primary-color: #0066cc;
+      --primary-color-dark: #0055aa;
+      --secondary-color: #ff9800;
+      --secondary-color-dark: #fb8c00;
+      --text-color: #333;
+      --text-color-light: #666;
+      --border-color: #dee2e6;
+      --background-color: #f8f9fa;
+      --section-background: #fff;
+      --header-background: #f1f3f5;
+      --hover-background: #e9ecef;
+      --border-radius: 6px;
+      --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      padding-bottom: 100px;
+    }
+    #app-container {
+      max-width: 950px;
+      margin: 24px auto;
+      padding: 0 15px;
+    }
+    #index {
+      background-color: var(--section-background);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      text-align: center;
+    }
+    #index h1 {
+      margin-top: 0;
+      margin-bottom: 25px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    #index ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    #index li { display: inline; }
+    #index a {
+      text-decoration: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      padding: 8px 15px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    #index a:hover {
+      background-color: #e6f0ff;
+      border-color: var(--primary-color);
+      color: var(--primary-color-dark);
+      box-shadow: var(--box-shadow);
+    }
+    .section {
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      background-color: var(--section-background);
+      box-shadow: var(--box-shadow);
+      display: none;
+      position: relative;
+      padding-bottom: 70px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .section.active { display: block; }
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 10;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .section-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-nav h2 {
+      margin: 0;
+      font-size: 1.3em;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    .section-actions {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background-color: #fdfdfd;
+      padding: 12px 15px;
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+      text-align: center;
+      z-index: 5;
+    }
+    .section-actions button {
+      margin: 0 10px; padding: 8px 18px;
+      background-color: var(--primary-color); color: white;
+      border: none; font-weight: 500;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .section-actions button:hover { background-color: var(--primary-color-dark); }
+    .section-actions button.secondary {
+      background-color: #f1f3f5; color: var(--text-color-light);
+      border: 1px solid #ced4da;
+    }
+    .section-actions button.secondary:hover {
+      background-color: #e9ecef; border-color: #adb5bd; color: var(--text-color);
+    }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: 500; margin-bottom: 4px; }
+    input[type="radio"], input[type="checkbox"] { margin-right: 6px; }
+    .checkbox-group { margin-left: 20px; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .tooltip { position: relative; display: inline-block; cursor: help; border-bottom: 1px dotted var(--text-color-light); }
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 250px;
+      background-color: #444;
+      color: #fff;
+      text-align: left;
+      border-radius: var(--border-radius);
+      padding: 8px 10px;
+      position: absolute;
+      z-index: 1;
+      top: 120%;
+      left: 50%;
+      margin-left: -125px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.9em;
+      line-height: 1.4;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .tooltip .tooltiptext::after {
+      content: "";
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent transparent #444 transparent;
+    }
+    .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+    .tooltip-up .tooltiptext {
+      top: auto !important;
+      bottom: 120% !important;
+    }
+    .tooltip-up .tooltiptext::after {
+      top: 100% !important;
+      bottom: auto !important;
+      border-color: #444 transparent transparent transparent !important;
+    }
+    select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+      font-size: 1em;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+    select { appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; padding-right: 2em; }
+    textarea { resize: vertical; line-height: 1.6; min-height: 80px; }
+    /* Modal de previsualización */
+    #previewModal {
+      display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 1000; align-items: center; justify-content: center; padding: 20px; animation: fadeInModal 0.3s ease;
+    }
+    @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+    #previewModal .modal-content {
+      background-color: white; padding: 25px 30px; border-radius: 8px; max-width: 600px; width: 90%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: scale(0.95); opacity: 0; animation: scaleUpModal 0.3s ease 0.1s forwards;
+    }
+    @keyframes scaleUpModal { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    #previewModal h3 { margin-top: 0; margin-bottom: 15px; color: var(--primary-color); font-size: 1.2em; font-weight: 600; }
+    #previewModal pre { white-space: pre-wrap; word-wrap: break-word; background-color: #f8f9fa; border: 1px solid #eee; padding: 15px; border-radius: 4px; max-height: 55vh; overflow-y: auto; font-size: 0.9em; line-height: 1.6; color: #444; }
+    #previewModal .modal-actions { text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border-color); }
+    #previewModal .modal-actions button { margin-left: 10px; padding: 8px 16px; font-weight: 500; cursor: pointer; border-radius: var(--border-radius); border: 1px solid transparent; }
+    #confirmCopyBtn { background-color: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+    #confirmCopyBtn:hover { background-color: var(--primary-color-dark); }
+    #cancelCopyBtn { background-color: #6c757d; border-color: #6c757d; color: #fff; }
+    #cancelCopyBtn:hover { background-color: #5a6268; }
+    /* Feedback */
+    #feedback-message {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 0, 0, 0.75); color: white; padding: 10px 20px; border-radius: var(--border-radius); z-index: 110; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    }
+    #feedback-message.visible { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s linear 0s; }
+  </style>
+</head>
+<body>
+  <div id="app-container">
+    <div id="index" class="section active">
+      <h1>Escalas Diagnósticas de ELA</h1>
+      <nav>
+        <ul>
+          <li><a data-action="showSection" data-target="escorial">El Escorial Criteria <span class="hotkey">(Ctrl+1)</span></a></li>
+          <li><a data-action="showSection" data-target="goldcoast">Gold Coast Criteria <span class="hotkey">(Ctrl+2)</span></a></li>
+          <li><a data-action="showSection" data-target="awaji">Awaji-Shima Criteria <span class="hotkey">(Ctrl+3)</span></a></li>
+        </ul>
+      </nav>
+      <p style="margin-top: 30px; font-size: 0.9em; color: var(--text-color-light);">
+        Selecciona una sección para completar o revisar. Los datos se guardan automáticamente en esta sesión.
+      </p>
+    </div>
+    <!-- El Escorial Criteria -->
+    <div id="escorial" class="section" data-key="escorial">
+      <div class="sticky-header">
+        <div class="section-nav">
+          <h2>El Escorial Criteria</h2>
+        </div>
+      </div>
+      <div style="padding: 0 15px;">
+        <p><strong>Propósito:</strong> Diagnóstico de ELA según regiones UMN/LMN.</p>
+        <div class="checkbox-group">
+          <div class="checkbox-row tooltip"><input type="checkbox" id="escorialUMN"><label for="escorialUMN">UMN en ≥3 regiones</label>
+            <span class="tooltiptext">Hiperreflexia, signo de Babinski o clonus en al menos 3 regiones: bulbar, cervical, torácica, lumbo-sacro.</span></div>
+          <div class="checkbox-row tooltip"><input type="checkbox" id="escorialLMN"><label for="escorialLMN">LMN clínico/electrofisiológico en ≥3 regiones</label>
+            <span class="tooltiptext">Denervación activa/crónica confirmada clínicamente o por EMG en ≥3 regiones motoras.</span></div>
+          <div class="checkbox-row tooltip"><input type="checkbox" id="escorialProgression"><label for="escorialProgression">Progresión documentada</label>
+            <span class="tooltiptext">Evidencia clínica de empeoramiento de signos motores en revisiones sucesivas.</span></div>
+          <div class="checkbox-row tooltip tooltip-up"><input type="checkbox" id="escorialNoAlt"><label for="escorialNoAlt">Sin diagnóstico alternativo</label>
+            <span class="tooltiptext">Exclusión de enfermedades que mimeticen ELA: neuropatías, miopatías, mielopatías.</span></div>
+        </div>
+        <div class="form-group tooltip">
+          <label for="escorialCategory">Categoría resultante:</label>
+          <select id="escorialCategory">
+            <option value="Definitiva">Definitiva</option>
+            <option value="Probable">Probable</option>
+            <option value="Posible">Posible</option>
+            <option value="Sospechoso">Sospechoso</option>
+          </select>
+          <span class="tooltiptext">Según el número y combinación de regiones UMN/LMN afectadas.</span>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button data-action="previewAndCopy" data-target="escorial">Previsualizar y Copiar</button>
+        <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+      </div>
+    </div>
+    <!-- Gold Coast Criteria -->
+    <div id="goldcoast" class="section" data-key="goldcoast">
+      <div class="sticky-header">
+        <div class="section-nav">
+          <h2>Gold Coast Criteria</h2>
+        </div>
+      </div>
+      <div style="padding: 0 15px;">
+        <p><strong>Propósito:</strong> Diagnóstico temprano simplificado de ELA.</p>
+        <div class="checkbox-group" style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="checkbox-row tooltip"><input type="checkbox" id="goldUMN"><label for="goldUMN">Signos de motoneurona superior</label>
+            <span class="tooltiptext">Espasticidad, hiperreflexia o Babinski en cualquier región.</span></div>
+          <div class="checkbox-row tooltip"><input type="checkbox" id="goldLMN"><label for="goldLMN">Signos de motoneurona inferior</label>
+            <span class="tooltiptext">Fasciculaciones, atrofia o denervación EMG en al menos una región.</span></div>
+          <div class="checkbox-row tooltip"><input type="checkbox" id="goldProgression"><label for="goldProgression">Progresión clínica documentada</label>
+            <span class="tooltiptext">Aumento de debilidad o nuevos signos motores en revisiones.</span></div>
+          <div class="checkbox-row tooltip tooltip-up"><input type="checkbox" id="goldNoAlt"><label for="goldNoAlt">Sin diagnóstico alternativo</label>
+            <span class="tooltiptext">Descartar neuropatías, miopatías y mimics con estudios adecuados.</span></div>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button data-action="previewAndCopy" data-target="goldcoast">Previsualizar y Copiar</button>
+        <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+      </div>
+    </div>
+    <!-- Awaji Criteria -->
+    <div id="awaji" class="section" data-key="awaji">
+      <div class="sticky-header">
+        <div class="section-nav">
+          <h2>Awaji-Shima Electrodiagnostic Criteria</h2>
+        </div>
+      </div>
+      <div style="padding: 0 15px;">
+        <p><strong>Propósito:</strong> Integrar EMG en diagnóstico precoz.</p>
+        <div class="checkbox-group">
+          <div class="checkbox-row tooltip"><input type="checkbox" id="awajiDenerv"><label for="awajiDenerv">Denervación activa</label>
+            <span class="tooltiptext">Fibrilaciones y ondas positivas en EMG indican denervación.</span></div>
+          <div class="checkbox-row tooltip"><input type="checkbox" id="awajiReinn"><label for="awajiReinn">Reinnervación crónica</label>
+            <span class="tooltiptext">Potenciales de unidad motora grandes/jumbo en EMG reflejan reinnervación.</span></div>
+          <div class="checkbox-row tooltip tooltip-up"><input type="checkbox" id="awajiRegions"><label for="awajiRegions">Afectación EMG en ≥2 regiones</label>
+            <span class="tooltiptext">Patrón neurotrófico en al menos dos niveles cervical, torácico o lumbar.</span></div>
+        </div>
+      </div>
+      <div class="section-actions">
+        <button data-action="previewAndCopy" data-target="awaji">Previsualizar y Copiar</button>
+        <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+      </div>
+    </div>
+    <!-- Modal de previsualización -->
+    <div id="previewModal" style="display: none;">
+      <div class="modal-content">
+        <h3>Previsualizar Texto a Copiar</h3>
+        <pre id="previewText"></pre>
+        <div class="modal-actions">
+          <button id="cancelCopyBtn" class="secondary">Cancelar</button>
+          <button id="confirmCopyBtn" class="btn-primary">Copiar y Enviar</button>
+        </div>
+      </div>
+    </div>
+    <div id="feedback-message"></div>
+  </div>
+  <script type="module">
+    // ══════════ Configuración y Estado ══════════
+    const Sections = [
+      { id: 'escorial', label: 'El Escorial Criteria' },
+      { id: 'goldcoast', label: 'Gold Coast Criteria' },
+      { id: 'awaji', label: 'Awaji-Shima Criteria' }
+    ];
+    let previewModal, previewText, confirmCopyBtn, cancelCopyBtn;
+    let textToCopyGlobal = '';
+    let successMessageGlobal = '';
+    // ══════════ Funciones Principales ══════════
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.toggle('active', section.id === sectionId);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function copySection(sectionId) {
+      let output = '';
+      if (sectionId === 'escorial') {
+        output += '[El Escorial Criteria]\n';
+        if(document.getElementById('escorialUMN').checked) output += '- UMN en ≥3 regiones\n';
+        if(document.getElementById('escorialLMN').checked) output += '- LMN clínico/electrofisiológico en ≥3 regiones\n';
+        if(document.getElementById('escorialProgression').checked) output += '- Progresión documentada\n';
+        if(document.getElementById('escorialNoAlt').checked) output += '- Sin diagnóstico alternativo\n';
+        output += 'Categoría: ' + document.getElementById('escorialCategory').value;
+      } else if (sectionId === 'goldcoast') {
+        output += '[Gold Coast Criteria]\n';
+        if(document.getElementById('goldUMN').checked) output += '- Signos de motoneurona superior\n';
+        if(document.getElementById('goldLMN').checked) output += '- Signos de motoneurona inferior\n';
+        if(document.getElementById('goldProgression').checked) output += '- Progresión clínica documentada\n';
+        if(document.getElementById('goldNoAlt').checked) output += '- Sin diagnóstico alternativo\n';
+      } else if (sectionId === 'awaji') {
+        output += '[Awaji-Shima Criteria]\n';
+        if(document.getElementById('awajiDenerv').checked) output += '- Denervación activa\n';
+        if(document.getElementById('awajiReinn').checked) output += '- Reinnervación crónica\n';
+        if(document.getElementById('awajiRegions').checked) output += '- Afectación EMG en ≥2 regiones\n';
+      }
+      return output;
+    }
+    function copyToClipboard(text, message) {
+      navigator.clipboard.writeText(text).then(() => {
+        showFeedback(message || "Texto copiado.");
+      }).catch(err => {
+        showFeedback("Error al copiar texto.", true);
+      });
+    }
+    function showFeedback(message, isError = false) {
+      const feedback = document.getElementById('feedback-message');
+      if (!feedback) return;
+      feedback.textContent = message;
+      feedback.style.backgroundColor = isError ? '#d32f2f' : 'rgba(0, 0, 0, 0.75)';
+      feedback.classList.add('visible');
+      setTimeout(() => {
+        feedback.classList.remove('visible');
+      }, 2000);
+    }
+    // ══════════ Guardado automático ══════════
+    function saveState(key, value) {
+      sessionStorage.setItem(key, value);
+    }
+    function loadSavedState() {
+      // Cargar checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+        const saved = sessionStorage.getItem(input.id);
+        if (saved !== null) input.checked = saved === 'true';
+      });
+      // Cargar selects
+      document.querySelectorAll('select').forEach(select => {
+        const saved = sessionStorage.getItem(select.id);
+        if (saved !== null) select.value = saved;
+      });
+    }
+    // ══════════ Listeners ══════════
+    function setupEventListeners() {
+      document.getElementById('app-container').addEventListener('click', handleAppClick);
+      document.getElementById('app-container').addEventListener('change', handleAppChange);
+      document.getElementById('app-container').addEventListener('input', handleAppInput);
+      if (confirmCopyBtn) confirmCopyBtn.addEventListener('click', handleConfirmCopy);
+      if (cancelCopyBtn) cancelCopyBtn.addEventListener('click', () => { if(previewModal) previewModal.style.display = 'none'; });
+      if (previewModal) previewModal.addEventListener('click', (event) => { if (event.target === previewModal) previewModal.style.display = 'none'; });
+      document.addEventListener('keydown', handleHotkeys);
+    }
+    function handleAppClick(ev) {
+      const targetElement = ev.target;
+      const actionElement = targetElement.closest('[data-action]');
+      if (!actionElement) return;
+      const action = actionElement.dataset.action;
+      const targetId = actionElement.dataset.target;
+      switch (action) {
+        case 'showSection':
+          if (targetId) showSection(targetId);
+          break;
+        case 'previewAndCopy':
+          if (targetId) {
+            let textToPreview = copySection(targetId);
+            textToCopyGlobal = textToPreview;
+            successMessageGlobal = 'Texto copiado.';
+            if(previewText) previewText.textContent = textToPreview;
+            if(previewModal) previewModal.style.display = 'flex';
+          }
+          break;
+        case 'returnToIndex':
+          showSection('index');
+          break;
+      }
+    }
+    function handleConfirmCopy() {
+      if (textToCopyGlobal) {
+        copyToClipboard(textToCopyGlobal, successMessageGlobal);
+      }
+      if(previewModal) previewModal.style.display = 'none';
+      textToCopyGlobal = '';
+      successMessageGlobal = '';
+    }
+    function handleAppChange(ev) {
+      const target = ev.target;
+      if (target.type === 'checkbox') {
+        saveState(target.id, target.checked);
+      } else if (target.tagName === 'SELECT') {
+        saveState(target.id, target.value);
+      }
+    }
+    function handleAppInput(ev) {
+      const target = ev.target;
+      if (target.type === 'checkbox') {
+        saveState(target.id, target.checked);
+      } else if (target.tagName === 'SELECT') {
+        saveState(target.id, target.value);
+      }
+    }
+    function handleHotkeys(e) {
+      if (e.ctrlKey && !e.altKey && !e.metaKey) {
+        const keyMap = { '1': 'escorial', '2': 'goldcoast', '3': 'awaji', '0': 'index' };
+        const targetKey = keyMap[e.key];
+        if (targetKey) {
+          e.preventDefault();
+          showSection(targetKey);
+          const sectionElement = document.getElementById(targetKey);
+          const firstInput = sectionElement?.querySelector('input, textarea, select');
+          if (firstInput) setTimeout(() => firstInput.focus(), 100);
+        }
+      }
+      if (e.key === 'Escape' && previewModal && previewModal.style.display === 'flex') {
+        previewModal.style.display = 'none';
+      }
+    }
+    function initApp() {
+      previewModal = document.getElementById('previewModal');
+      previewText = document.getElementById('previewText');
+      confirmCopyBtn = document.getElementById('confirmCopyBtn');
+      cancelCopyBtn = document.getElementById('cancelCopyBtn');
+      loadSavedState();
+      setupEventListeners();
+      showSection('index');
+    }
+    initApp();
+  </script>
+</body>
+</html>

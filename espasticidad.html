@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalas de Espasticidad</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --text-color: #333;
+            --text-color-light: #666;
+            --border-color: #ddd;
+            --background-color: #f8f9fa;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--text-color);
+            margin-top: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .scale-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .scale-description {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .muscle-group {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+
+        .muscle-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+            background-color: #f2f2f2;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-color: var(--border-color);
+            border-bottom-color: white;
+            margin-bottom: -1px;
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background-color: #6c757d;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Escalas de Espasticidad</h1>
+            <button id="close-btn" class="btn btn-secondary">Cerrar</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="ashworth">Escala de Ashworth Modificada</div>
+            <div class="tab" data-tab="tardieu">Escala de Tardieu Modificada</div>
+            <div class="tab" data-tab="info">Información</div>
+        </div>
+
+        <div id="ashworth-tab" class="tab-content active">
+            <div class="scale-section">
+                <h2>Escala de Ashworth Modificada (MAS)</h2>
+                <div class="scale-description">
+                    <p>La Escala de Ashworth Modificada evalúa el grado de espasticidad muscular mediante la resistencia al movimiento pasivo. Es una de las escalas más utilizadas en la práctica clínica para evaluar la espasticidad.</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Grado</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Sin aumento del tono muscular</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Ligero aumento del tono muscular, manifestado por una mínima resistencia al final del movimiento de flexión o extensión</td>
+                        </tr>
+                        <tr>
+                            <td>1+</td>
+                            <td>Ligero aumento del tono muscular, manifestado por una mínima resistencia en menos de la mitad del arco de movimiento</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Aumento más pronunciado del tono muscular en la mayor parte del arco de movimiento, pero la parte afectada se mueve con facilidad</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Considerable aumento del tono muscular; el movimiento pasivo resulta difícil</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>La parte afectada está rígida en flexión o extensión</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="muscle-group">
+                    <h3>Miembro Superior</h3>
+                    <div class="form-group">
+                        <label for="ashworth-flexores-codo">Flexores de codo:</label>
+                        <select id="ashworth-flexores-codo" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-extensores-codo">Extensores de codo:</label>
+                        <select id="ashworth-extensores-codo" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-pronadores">Pronadores:</label>
+                        <select id="ashworth-pronadores" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-flexores-muneca">Flexores de muñeca:</label>
+                        <select id="ashworth-flexores-muneca" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="muscle-group">
+                    <h3>Miembro Inferior</h3>
+                    <div class="form-group">
+                        <label for="ashworth-flexores-cadera">Flexores de cadera:</label>
+                        <select id="ashworth-flexores-cadera" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-aductores-cadera">Aductores de cadera:</label>
+                        <select id="ashworth-aductores-cadera" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-extensores-rodilla">Extensores de rodilla:</label>
+                        <select id="ashworth-extensores-rodilla" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-flexores-rodilla">Flexores de rodilla:</label>
+                        <select id="ashworth-flexores-rodilla" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ashworth-flexores-plantares">Flexores plantares (gemelos):</label>
+                        <select id="ashworth-flexores-plantares" class="ashworth-select">
+                            <option value="">Seleccionar</option>
+                            <option value="0">0 - Sin aumento del tono</option>
+                            <option value="1">1 - Ligero aumento al final del movimiento</option>
+                            <option value="1+">1+ - Ligero aumento en menos de la mitad del arco</option>
+                            <option value="2">2 - Aumento más pronunciado en la mayor parte del arco</option>
+                            <option value="3">3 - Considerable aumento, movimiento pasivo difícil</option>
+                            <option value="4">4 - Parte afectada rígida</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="result-box">
+                    <h3>Resultado:</h3>
+                    <div id="ashworth-result">Complete la evaluación para ver el resultado</div>
+                </div>
+
+                <div class="actions">
+                    <button id="ashworth-reset" class="btn btn-secondary">Reiniciar</button>
+                    <button id="ashworth-generate" class="btn">Generar Informe</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tardieu-tab" class="tab-content">
+            <div class="scale-section">
+                <h2>Escala de Tardieu Modificada</h2>
+                <div class="scale-description">
+                    <p>La Escala de Tardieu evalúa la espasticidad considerando la velocidad del movimiento pasivo. Mide la calidad de la reacción muscular (X) y el ángulo de reacción muscular (Y) a diferentes velocidades.</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Velocidad (V)</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>V1</td>
+                            <td>Lo más lento posible (más lento que la caída natural del miembro bajo la gravedad)</td>
+                        </tr>
+                        <tr>
+                            <td>V2</td>
+                            <td>Velocidad de caída del miembro bajo la gravedad</td>
+                        </tr>
+                        <tr>
+                            <td>V3</td>
+                            <td>Lo más rápido posible (más rápido que la caída del miembro bajo la gravedad)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Calidad de la reacción muscular (X)</th>
+                            <th>Descripción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Sin resistencia durante el movimiento pasivo</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Ligera resistencia durante el movimiento pasivo, sin "agarrotamiento" claro</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Claro "agarrotamiento" en un ángulo específico, interrumpiendo el movimiento pasivo, seguido de relajación</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Clonus agotable (menos de 10 segundos cuando se mantiene la presión) que aparece en un ángulo específico</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Clonus inagotable (más de 10 segundos cuando se mantiene la presión) que aparece en un ángulo específico</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="muscle-group">
+                    <h3>Evaluación de Músculos</h3>
+                    <p>Seleccione un grupo muscular para evaluar:</p>
+                    <div class="form-group">
+                        <label for="tardieu-muscle">Grupo muscular:</label>
+                        <select id="tardieu-muscle">
+                            <option value="">Seleccionar</option>
+                            <option value="flexores-codo">Flexores de codo</option>
+                            <option value="extensores-codo">Extensores de codo</option>
+                            <option value="flexores-muneca">Flexores de muñeca</option>
+                            <option value="flexores-rodilla">Flexores de rodilla</option>
+                            <option value="extensores-rodilla">Extensores de rodilla</option>
+                            <option value="flexores-plantares">Flexores plantares (gemelos)</option>
+                        </select>
+                    </div>
+
+                    <div id="tardieu-evaluation" style="display: none;">
+                        <div class="form-group">
+                            <label for="tardieu-quality-v1">Calidad de reacción muscular (X) a V1:</label>
+                            <select id="tardieu-quality-v1">
+                                <option value="">Seleccionar</option>
+                                <option value="0">0 - Sin resistencia</option>
+                                <option value="1">1 - Ligera resistencia</option>
+                                <option value="2">2 - Claro "agarrotamiento"</option>
+                                <option value="3">3 - Clonus agotable</option>
+                                <option value="4">4 - Clonus inagotable</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tardieu-angle-v1">Ángulo de reacción muscular (Y) a V1 (grados):</label>
+                            <input type="number" id="tardieu-angle-v1" min="0" max="180">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tardieu-quality-v3">Calidad de reacción muscular (X) a V3:</label>
+                            <select id="tardieu-quality-v3">
+                                <option value="">Seleccionar</option>
+                                <option value="0">0 - Sin resistencia</option>
+                                <option value="1">1 - Ligera resistencia</option>
+                                <option value="2">2 - Claro "agarrotamiento"</option>
+                                <option value="3">3 - Clonus agotable</option>
+                                <option value="4">4 - Clonus inagotable</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tardieu-angle-v3">Ángulo de reacción muscular (Y) a V3 (grados):</label>
+                            <input type="number" id="tardieu-angle-v3" min="0" max="180">
+                        </div>
+
+                        <div class="form-group">
+                            <button id="tardieu-add-muscle" class="btn">Añadir a resultados</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-box">
+                    <h3>Resultados:</h3>
+                    <div id="tardieu-results">No hay resultados aún</div>
+                </div>
+
+                <div class="actions">
+                    <button id="tardieu-reset" class="btn btn-secondary">Reiniciar</button>
+                    <button id="tardieu-generate" class="btn">Generar Informe</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="info-tab" class="tab-content">
+            <div class="scale-section">
+                <h2>Información sobre Escalas de Espasticidad</h2>
+                
+                <h3>Escala de Ashworth Modificada</h3>
+                <p>La Escala de Ashworth Modificada (MAS) es una de las herramientas más utilizadas para evaluar la espasticidad muscular en la práctica clínica. Evalúa la resistencia encontrada durante el movimiento pasivo de una articulación.</p>
+                <p>Ventajas:</p>
+                <ul>
+                    <li>Fácil y rápida de aplicar</li>
+                    <li>No requiere equipamiento especial</li>
+                    <li>Ampliamente utilizada y reconocida</li>
+                </ul>
+                <p>Limitaciones:</p>
+                <ul>
+                    <li>No distingue entre componentes neurales y no neurales de la hipertonía</li>
+                    <li>Variabilidad inter-evaluador</li>
+                    <li>No considera la velocidad del movimiento</li>
+                </ul>
+
+                <h3>Escala de Tardieu Modificada</h3>
+                <p>La Escala de Tardieu evalúa la espasticidad considerando la velocidad del movimiento pasivo, lo que permite diferenciar entre componentes neurales y biomecánicos de la hipertonía.</p>
+                <p>Ventajas:</p>
+                <ul>
+                    <li>Evalúa la respuesta a diferentes velocidades de estiramiento</li>
+                    <li>Permite distinguir entre espasticidad y contractura</li>
+                    <li>Mayor sensibilidad para detectar cambios después de intervenciones</li>
+                </ul>
+                <p>Limitaciones:</p>
+                <ul>
+                    <li>Más compleja y requiere más tiempo para su aplicación</li>
+                    <li>Necesita mayor entrenamiento del evaluador</li>
+                    <li>Menor difusión en la práctica clínica</li>
+                </ul>
+
+                <h3>Comparación entre escalas</h3>
+                <p>La Escala de Tardieu se considera más sensible para evaluar la espasticidad que la Escala de Ashworth, especialmente para determinar la respuesta al tratamiento con toxina botulínica o para planificar intervenciones quirúrgicas. Sin embargo, la Escala de Ashworth es más práctica para evaluaciones rutinarias debido a su simplicidad.</p>
+                
+                <h3>Recomendaciones para la evaluación</h3>
+                <ul>
+                    <li>Realizar la evaluación con el paciente en posición cómoda y relajada</li>
+                    <li>Mantener una temperatura ambiente confortable</li>
+                    <li>Explicar claramente el procedimiento al paciente</li>
+                    <li>Realizar los movimientos de forma estandarizada</li>
+                    <li>Documentar la posición inicial de la articulación</li>
+                    <li>Para la Escala de Tardieu, asegurar que las velocidades V1 y V3 sean claramente diferentes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="espasticidad.js"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+/* anatomy-trainer.css */
+
+#anatomy-trainer {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+#anatomy-trainer h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+#anatomy-trainer p {
+  font-size: 1.1rem;
+  margin: 0.7rem 0;
+}
+
+#anatomy-trainer button {
+  display: inline-block;
+  margin: 0.4rem 0.2rem;
+  padding: 0.5rem 1.2rem;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#anatomy-trainer button:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+}
+
+#anatomy-trainer button:hover:not(:disabled) {
+  background: #217dbb;
+}
+
+#anatomy-trainer strong {
+  color: #16a085;
+}
+
+#anatomy-trainer em {
+  color: #7f8c8d;
+  font-size: 0.98rem;
+}
+
+#anatomy-trainer .regla-mnemonica {
+  background: #fffbe6;
+  border-left: 4px solid #f1c40f;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0 0.5rem 0;
+  font-style: italic;
+  color: #b7950b;
+} 

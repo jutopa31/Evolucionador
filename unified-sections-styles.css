@@ -1,0 +1,608 @@
+/**
+ * 🎨 Estilos Unificados para Todas las Secciones
+ * Suite Neurología v2.1.0 - Diseño Limpio y Profesional
+ */
+
+/* === VARIABLES GLOBALES UNIFICADAS - COLORES SUTILES === */
+:root {
+  /* Colores principales por sección - TONOS SUAVES Y PROFESIONALES */
+  --section-medicacion: #64748b;
+  --section-ingreso: #6b7280;
+  --section-antecedentes: #64748b;
+  --section-fisico: #6b7280;
+  --section-notas: #64748b;
+  --section-ia: #6b7280;
+  --section-datos: #64748b;
+  --section-default: #6b7280;
+  
+  /* Gradientes sutiles por sección */
+  --gradient-medicacion: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-ingreso: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-antecedentes: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-fisico: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-notas: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-ia: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-datos: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  --gradient-default: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  
+  /* Iconos por sección */
+  --icon-medicacion: '💊';
+  --icon-ingreso: '📝';
+  --icon-antecedentes: '📋';
+  --icon-fisico: '🩺';
+  --icon-notas: '📄';
+  --icon-ia: '🧠';
+  --icon-datos: '👤';
+  --icon-default: '📌';
+  
+  /* Tamaños más pequeños y sutiles */
+  --section-header-height: 48px;
+  --section-content-padding: 20px;
+  --section-border-radius: 8px;
+  --section-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --section-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  /* Transiciones suaves */
+  --section-transition: all 0.15s ease;
+  --section-transition-fast: all 0.1s ease;
+}
+
+/* === RESET Y BASE PARA TODAS LAS SECCIONES === */
+.section {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--section-border-radius);
+  box-shadow: var(--section-shadow);
+  transition: var(--section-transition);
+  overflow: hidden;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.section:hover {
+  box-shadow: var(--section-shadow-hover);
+  border-color: #d1d5db;
+}
+
+/* === HEADERS UNIFICADOS CON DISEÑO LIMPIO === */
+.section-header {
+  height: var(--section-header-height);
+  padding: 12px 16px;
+  border-radius: var(--section-border-radius) var(--section-border-radius) 0 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: var(--section-transition);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.section-header:hover {
+  background: #f3f4f6;
+}
+
+.section-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  flex-grow: 1;
+  color: #374151;
+}
+
+/* === ICONOS ESPECÍFICOS POR SECCIÓN - MÁS PEQUEÑOS === */
+.section[data-key="medicacion"] .section-header h3::before {
+  content: var(--icon-medicacion);
+  font-size: 1.1rem;
+}
+
+.section[data-key="ingreso_manual"] .section-header h3::before {
+  content: var(--icon-ingreso);
+  font-size: 1.1rem;
+}
+
+.section[data-key="antecedentes_personales"] .section-header h3::before {
+  content: var(--icon-antecedentes);
+  font-size: 1.1rem;
+}
+
+.section[data-key="fisico"] .section-header h3::before {
+  content: var(--icon-fisico);
+  font-size: 1.1rem;
+}
+
+.section[data-key="notas_libres"] .section-header h3::before {
+  content: var(--icon-notas);
+  font-size: 1.1rem;
+}
+
+.section[data-key="ia"] .section-header h3::before {
+  content: var(--icon-ia);
+  font-size: 1.1rem;
+}
+
+.section[data-key="datos"] .section-header h3::before {
+  content: var(--icon-datos);
+  font-size: 1.1rem;
+}
+
+.section[data-key="evolucion"] .section-header h3::before {
+  content: '📈';
+  font-size: 1.1rem;
+}
+
+/* Secciones sin data-key específico */
+.section:not([data-key]) .section-header h3::before {
+  content: var(--icon-default);
+  font-size: 1.1rem;
+}
+
+/* === CONTENIDO DE SECCIONES UNIFICADO === */
+.section-content {
+  padding: var(--section-content-padding);
+  background: white;
+  border-radius: 0 0 var(--section-border-radius) var(--section-border-radius);
+  min-height: 100px;
+  position: relative;
+}
+
+/* === INPUTS Y TEXTAREAS UNIFICADOS - DISEÑO LIMPIO === */
+.section textarea,
+.section input[type="text"],
+.section input[type="email"],
+.section input[type="tel"],
+.section input[type="date"],
+.section select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  color: #374151;
+  transition: var(--section-transition);
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.section textarea:focus,
+.section input:focus,
+.section select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.section textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.section textarea::placeholder,
+.section input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* === BOTONES UNIFICADOS - DISEÑO LIMPIO === */
+.section button {
+  padding: 8px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--section-transition);
+  white-space: nowrap;
+  position: relative;
+  font-family: inherit;
+  background: white;
+  color: #374151;
+}
+
+.section button:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.section button:not(.secondary):not(.danger) {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+
+.section button:not(.secondary):not(.danger):hover {
+  background: #5856eb;
+  border-color: #5856eb;
+}
+
+.section button.secondary {
+  background: white;
+  color: #6b7280;
+  border-color: #d1d5db;
+}
+
+.section button.secondary:hover {
+  background: #f9fafb;
+  color: #374151;
+}
+
+.section button.danger {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.section button.danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+/* === GRUPOS DE INPUT ESTRUCTURADOS === */
+.section .input-group {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.section .input-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.section .structured-input-container {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.section .evolution-group-wrapper {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* === CHIPS Y ELEMENTOS ESPECIALES === */
+.section .chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  transition: var(--section-transition);
+  margin: 2px;
+}
+
+.section .chip:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+/* === CONTROLES INLINE SUTILES === */
+.section-header .inline-controls {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+  background: rgba(255,255,255,0.8);
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.section-header:hover .inline-controls {
+  display: flex;
+}
+
+.section-header .inline-controls button {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 1rem;
+  padding: 2px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: var(--section-transition-fast);
+}
+
+.section-header .inline-controls button:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* === INDICADORES DE ESTADO SUTILES === */
+.section-header .save-indicator {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border: 1px solid #e5e7eb;
+}
+
+.section-header .save-indicator.visible {
+  opacity: 1;
+}
+
+/* === CORRECCIÓN PARA ICONOS DE VOZ === */
+.voice-input-btn {
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  background: white !important;
+  border: 1px solid #d1d5db !important;
+  padding: 6px !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  color: #6b7280 !important;
+  border-radius: 4px !important;
+  transition: all 0.15s ease !important;
+  z-index: 5 !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+}
+
+.voice-input-btn:hover {
+  background: #f9fafb !important;
+  color: #374151 !important;
+  border-color: #9ca3af !important;
+}
+
+/* Para inputs de una línea */
+.input-group input[type="text"] + .voice-input-btn,
+.input-group input[type="date"] + .voice-input-btn,
+.input-group input[type="tel"] + .voice-input-btn,
+.input-group input[type="email"] + .voice-input-btn {
+  bottom: 50% !important;
+  transform: translateY(50%) !important;
+  right: 8px !important;
+}
+
+/* === RESPONSIVE DESIGN === */
+@media (max-width: 768px) {
+  .section {
+    margin-bottom: 12px;
+  }
+  
+  .section-header {
+    height: 44px;
+    padding: 10px 12px;
+  }
+  
+  .section-header h3 {
+    font-size: 0.95rem;
+  }
+  
+  .section-content {
+    padding: 16px;
+  }
+  
+  .section textarea,
+  .section input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .section button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .voice-input-btn {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* === MODO OSCURO === */
+@media (prefers-color-scheme: dark) {
+  .section {
+    background: #1f2937;
+    border-color: #374151;
+  }
+  
+  .section-header {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .section-header:hover {
+    background: #1f2937;
+  }
+  
+  .section-header h3 {
+    color: #f9fafb;
+  }
+  
+  .section-content {
+    background: #1f2937;
+  }
+  
+  .section textarea,
+  .section input,
+  .section select {
+    background: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+  }
+  
+  .section textarea:focus,
+  .section input:focus,
+  .section select:focus {
+    border-color: #6366f1;
+  }
+  
+  .section .chip {
+    background: #374151;
+    color: #f9fafb;
+    border-color: #4b5563;
+  }
+  
+  .section .evolution-group-wrapper {
+    background: #111827;
+    border-color: #374151;
+  }
+  
+  .section .input-group label {
+    color: #e5e7eb;
+  }
+}
+
+/* === ACCESIBILIDAD === */
+@media (prefers-reduced-motion: reduce) {
+  .section,
+  .section-header,
+  .section-content,
+  .section button,
+  .section .chip {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* === FOCUS VISIBLE === */
+.section:focus-visible,
+.section-header:focus-visible,
+.section button:focus-visible,
+.section textarea:focus-visible,
+.section input:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* === ESTADOS ESPECIALES === */
+.section.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.section.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.section.success {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* === CORRECCIONES ESPECÍFICAS === */
+
+/* Eliminar cualquier overlay problemático */
+.section-header *::before,
+.section-header *::after {
+  animation: none !important;
+}
+
+/* Asegurar que no hay elementos superpuestos */
+.section-header {
+  z-index: 1;
+  isolation: isolate;
+}
+
+/* Eliminar efectos de hover problemáticos en antecedentes */
+.section[data-key="antecedentes_personales"] .section-header {
+  background: #f9fafb !important;
+}
+
+.section[data-key="antecedentes_personales"] .section-header:hover {
+  background: #f3f4f6 !important;
+}
+
+.section[data-key="antecedentes_personales"] .section-header h3 {
+  color: #374151 !important;
+}
+
+/* Corrección para datos del paciente */
+.section[data-key="datos"] .section-header {
+  background: #f9fafb !important;
+}
+
+.section[data-key="datos"] .section-header:hover {
+  background: #f3f4f6 !important;
+}
+
+.section[data-key="datos"] .section-header h3 {
+  color: #374151 !important;
+}
+
+/* Asegurar que los botones no tengan overlays extraños */
+.section button {
+  isolation: isolate;
+}
+
+/* Eliminar animaciones problemáticas globalmente */
+* {
+  animation-play-state: running !important;
+}
+
+/* CORRECCIONES ESPECÍFICAS PARA INPUTS */
+input[type="text"],
+input[type="email"], 
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  background: white !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus, 
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  background: white !important;
+  color: #374151 !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Corregir inputs específicos que pueden tener estilos problemáticos */
+#fecha_evaluacion,
+#dni,
+#nombre_apellido,
+#obra_social,
+#telefono_email {
+  background: white !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* Asegurar que los wrappers de inputs no tengan fondos extraños */
+.input-wrapper,
+.input-group,
+.form-group {
+  background: transparent !important;
+} 

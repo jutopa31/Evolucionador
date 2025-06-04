@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escala de Evaluación Clínica de Miastenia Gravis (Composite)</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for Miastenia Gravis scale */
+        .mg-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: var(--font-sans);
+        }
+        
+        .mg-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .mg-header h1 {
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+        }
+        
+        .mg-header p {
+            color: var(--text-color-light);
+            font-style: italic;
+        }
+        
+        .mg-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: var(--section-background);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .mg-section h2 {
+            color: var(--secondary-color);
+            font-size: 1.2em;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .mg-item {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--border-color);
+        }
+        
+        .mg-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .mg-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .mg-item-title {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .mg-item-score {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .mg-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .mg-option {
+            display: flex;
+            align-items: center;
+            padding: 8px 10px;
+            background-color: var(--background-color);
+            border-radius: var(--border-radius);
+            transition: background-color 0.2s ease;
+        }
+        
+        .mg-option:hover {
+            background-color: var(--hover-background);
+        }
+        
+        .mg-option input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .mg-option label {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+        
+        .mg-results {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #e3f2fd;
+            border: 1px solid #b3e5fc;
+            border-radius: var(--border-radius);
+        }
+        
+        .mg-results h2 {
+            color: #0277bd;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .mg-score-total {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #0277bd;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .mg-interpretation {
+            padding: 10px;
+            background-color: #fff;
+            border-radius: var(--border-radius);
+            border-left: 4px solid #0277bd;
+        }
+        
+        .mg-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .mg-actions button {
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        
+        .mg-btn-calculate {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        
+        .mg-btn-calculate:hover {
+            background-color: var(--secondary-color-dark);
+        }
+        
+        .mg-btn-reset {
+            background-color: #f1f3f5;
+            color: var(--text-color);
+        }
+        
+        .mg-btn-reset:hover {
+            background-color: #e9ecef;
+        }
+        
+        .mg-btn-insert {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .mg-btn-insert:hover {
+            background-color: var(--primary-color-dark);
+        }
+        
+        @media (max-width: 768px) {
+            .mg-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .mg-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .mg-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="mg-container">
+        <div class="mg-header">
+            <h1>Escala de Evaluación Clínica de Miastenia Gravis (Composite)</h1>
+            <p>Evaluación estandarizada para pacientes con Miastenia Gravis</p>
+        </div>
+        
+        <form id="mg-form">
+            <!-- Ocular Section -->
+            <div class="mg-section">
+                <h2>I. Síntomas Oculares</h2>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">a. Ptosis (determinada por fijación hacia arriba)</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-ptosis">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="ptosis-0" name="ptosis" value="0" checked>
+                            <label for="ptosis-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="ptosis-1" name="ptosis" value="1">
+                            <label for="ptosis-1">1 - Presente pero no constante</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="ptosis-2" name="ptosis" value="2">
+                            <label for="ptosis-2">2 - Moderada (cubre menos de la mitad del ojo)</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="ptosis-3" name="ptosis" value="3">
+                            <label for="ptosis-3">3 - Severa (cubre más de la mitad del ojo)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">b. Diplopía (en posición lateral)</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-diplopia">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="diplopia-0" name="diplopia" value="0" checked>
+                            <label for="diplopia-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="diplopia-1" name="diplopia" value="1">
+                            <label for="diplopia-1">1 - Presente solo con fatiga o mirada prolongada</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="diplopia-2" name="diplopia" value="2">
+                            <label for="diplopia-2">2 - Constante pero no severa</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="diplopia-3" name="diplopia" value="3">
+                            <label for="diplopia-3">3 - Severa o incapacitante</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bulbar Section -->
+            <div class="mg-section">
+                <h2>II. Síntomas Bulbares</h2>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">a. Dificultad para masticar</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-chewing">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="chewing-0" name="chewing" value="0" checked>
+                            <label for="chewing-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="chewing-1" name="chewing" value="1">
+                            <label for="chewing-1">1 - Fatiga con alimentos sólidos</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="chewing-2" name="chewing" value="2">
+                            <label for="chewing-2">2 - Fatiga con alimentos blandos</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="chewing-3" name="chewing" value="3">
+                            <label for="chewing-3">3 - Requiere alimentación por sonda</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">b. Dificultad para tragar</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-swallowing">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="swallowing-0" name="swallowing" value="0" checked>
+                            <label for="swallowing-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="swallowing-1" name="swallowing" value="1">
+                            <label for="swallowing-1">1 - Infrecuente atragantamiento</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="swallowing-2" name="swallowing" value="2">
+                            <label for="swallowing-2">2 - Cambios dietéticos necesarios</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="swallowing-3" name="swallowing" value="3">
+                            <label for="swallowing-3">3 - Alimentación por sonda</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">c. Dificultad para hablar</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-speaking">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="speaking-0" name="speaking" value="0" checked>
+                            <label for="speaking-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="speaking-1" name="speaking" value="1">
+                            <label for="speaking-1">1 - Disartria intermitente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="speaking-2" name="speaking" value="2">
+                            <label for="speaking-2">2 - Disartria constante o nasal</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="speaking-3" name="speaking" value="3">
+                            <label for="speaking-3">3 - Habla ininteligible</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Respiratory Section -->
+            <div class="mg-section">
+                <h2>III. Función Respiratoria</h2>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">a. Disnea</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-dyspnea">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="dyspnea-0" name="dyspnea" value="0" checked>
+                            <label for="dyspnea-0">0 - Ausente</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="dyspnea-1" name="dyspnea" value="1">
+                            <label for="dyspnea-1">1 - Disnea con esfuerzo</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="dyspnea-2" name="dyspnea" value="2">
+                            <label for="dyspnea-2">2 - Disnea en reposo</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="dyspnea-3" name="dyspnea" value="3">
+                            <label for="dyspnea-3">3 - Ventilación mecánica</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">b. Capacidad vital</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-vital-capacity">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="vital-capacity-0" name="vital-capacity" value="0" checked>
+                            <label for="vital-capacity-0">0 - ≥ 80% del valor predicho</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="vital-capacity-1" name="vital-capacity" value="1">
+                            <label for="vital-capacity-1">1 - 65-79% del valor predicho</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="vital-capacity-2" name="vital-capacity" value="2">
+                            <label for="vital-capacity-2">2 - 50-64% del valor predicho</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="vital-capacity-3" name="vital-capacity" value="3">
+                            <label for="vital-capacity-3">3 - < 50% del valor predicho</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Limb Section -->
+            <div class="mg-section">
+                <h2>IV. Fuerza en Extremidades</h2>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">a. Extremidades superiores</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-upper-limbs">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="upper-limbs-0" name="upper-limbs" value="0" checked>
+                            <label for="upper-limbs-0">0 - Normal</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="upper-limbs-1" name="upper-limbs" value="1">
+                            <label for="upper-limbs-1">1 - Fatiga leve (25% de pérdida)</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="upper-limbs-2" name="upper-limbs" value="2">
+                            <label for="upper-limbs-2">2 - Fatiga moderada (50% de pérdida)</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="upper-limbs-3" name="upper-limbs" value="3">
+                            <label for="upper-limbs-3">3 - Fatiga severa (75% de pérdida)</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mg-item">
+                    <div class="mg-item-header">
+                        <div class="mg-item-title">b. Extremidades inferiores</div>
+                        <div class="mg-item-score">Puntuación: <span id="score-lower-limbs">0</span></div>
+                    </div>
+                    <div class="mg-options">
+                        <div class="mg-option">
+                            <input type="radio" id="lower-limbs-0" name="lower-limbs" value="0" checked>
+                            <label for="lower-limbs-0">0 - Normal</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="lower-limbs-1" name="lower-limbs" value="1">
+                            <label for="lower-limbs-1">1 - Fatiga leve (25% de pérdida)</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="lower-limbs-2" name="lower-limbs" value="2">
+                            <label for="lower-limbs-2">2 - Fatiga moderada (50% de pérdida)</label>
+                        </div>
+                        <div class="mg-option">
+                            <input type="radio" id="lower-limbs-3" name="lower-limbs" value="3">
+                            <label for="lower-limbs-3">3 - Fatiga severa (75% de pérdida)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Section -->
+            <div class="mg-results">
+                <h2>Resultados</h2>
+                <div class="mg-score-total">
+                    Puntuación Total: <span id="total-score">0</span>/24
+                </div>
+                <div class="mg-interpretation" id="interpretation">
+                    <p>Interpretación: Miastenia Gravis mínima o ausente.</p>
+                </div>
+            </div>
+            
+            <div class="mg-actions">
+                <button type="button" class="mg-btn-calculate" id="calculate-btn">Calcular Puntuación</button>
+                <button type="button" class="mg-btn-reset" id="reset-btn">Reiniciar</button>
+                <button type="button" class="mg-btn-insert" id="insert-btn">Insertar en Nota</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all radio buttons
+            const radioButtons = document.querySelectorAll('input[type="radio"]');
+            
+            // Add event listeners to update individual scores
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const name = this.name;
+                    const value = parseInt(this.value);
+                    document.getElementById(`score-${name}`).textContent = value;
+                });
+            });
+            
+            // Calculate button functionality
+            document.getElementById('calculate-btn').addEventListener('click', function() {
+                calculateTotalScore();
+            });
+            
+            // Reset button functionality
+            document.getElementById('reset-btn').addEventListener('click', function() {
+                document.getElementById('mg-form').reset();
+                
+                // Reset all individual scores
+                document.querySelectorAll('[id^="score-"]').forEach(span => {
+                    span.textContent = '0';
+                });
+                
+                // Reset total score and interpretation
+                document.getElementById('total-score').textContent = '0';
+                document.getElementById('interpretation').innerHTML = '<p>Interpretación: Miastenia Gravis mínima o ausente.</p>';
+            });
+            
+            // Insert button functionality
+            document.getElementById('insert-btn').addEventListener('click', function() {
+                const totalScore = parseInt(document.getElementById('total-score').textContent);
+                
+                // Only proceed if score has been calculated
+                if (totalScore > 0 || confirm('La puntuación no ha sido calculada. ¿Desea calcularla ahora?')) {
+                    if (totalScore === 0) {
+                        calculateTotalScore();
+                    }
+                    
+                    // Create formatted text for insertion
+                    const formattedText = createFormattedText();
+                    
+                    // Check if we're in the main application context
+                    if (window.parent && window.parent.insertAtCursor) {
+                        // We're in an iframe, send message to parent
+                        window.parent.postMessage({
+                            type: 'mgScaleText',
+                            text: formattedText
+                        }, '*');
+                    } else if (window.insertAtCursor) {
+                        // We're in the main window
+                        const fisicoTextarea = document.getElementById('ta-fisico');
+                        if (fisicoTextarea) {
+                            window.insertAtCursor(fisicoTextarea, formattedText);
+                            alert('Escala de Miastenia Gravis insertada en el examen físico.');
+                        } else {
+                            alert('No se pudo encontrar el área de examen físico para insertar la escala.');
+                        }
+                    } else {
+                        // Neither context available, copy to clipboard
+                        navigator.clipboard.writeText(formattedText)
+                            .then(() => alert('Escala copiada al portapapeles.'))
+                            .catch(err => {
+                                console.error('Error al copiar al portapapeles:', err);
+                                alert('No se pudo copiar al portapapeles. Por favor, copia el texto manualmente.');
+                                
+                                // Show text in a modal or alert
+                                alert(formattedText);
+                            });
+                    }
+                }
+            });
+            
+            // Function to calculate total score
+            function calculateTotalScore() {
+                let total = 0;
+                const scoreItems = [
+                    'ptosis', 'diplopia', 'chewing', 'swallowing', 'speaking', 
+                    'dyspnea', 'vital-capacity', 'upper-limbs', 'lower-limbs'
+                ];
+                
+                scoreItems.forEach(item => {
+                    const selectedRadio = document.querySelector(`input[name="${item}"]:checked`);
+                    if (selectedRadio) {
+                        total += parseInt(selectedRadio.value);
+                    }
+                });
+                
+                // Update total score
+                document.getElementById('total-score').textContent = total;
+                
+                // Update interpretation
+                updateInterpretation(total);
+            }
+            
+            // Function to update interpretation based on score
+            function updateInterpretation(score) {
+                let interpretation = '';
+                
+                if (score <= 3) {
+                    interpretation = 'Miastenia Gravis mínima o ausente.';
+                } else if (score <= 8) {
+                    interpretation = 'Miastenia Gravis leve.';
+                } else if (score <= 16) {
+                    interpretation = 'Miastenia Gravis moderada.';
+                } else {
+                    interpretation = 'Miastenia Gravis severa.';
+                }
+                
+                document.getElementById('interpretation').innerHTML = `<p>Interpretación: ${interpretation}</p>`;
+            }
+            
+            // Function to create formatted text for insertion
+            function createFormattedText() {
+                const totalScore = document.getElementById('total-score').textContent;
+                const interpretation = document.getElementById('interpretation').textContent.replace('Interpretación: ', '');
+                
+                // Get individual scores
+                const ptosis = document.querySelector('input[name="ptosis"]:checked').value;
+                const diplopia = document.querySelector('input[name="diplopia"]:checked').value;
+                const chewing = document.querySelector('input[name="chewing"]:checked').value;
+                const swallowing = document.querySelector('input[name="swallowing"]:checked').value;
+                const speaking = document.querySelector('input[name="speaking"]:checked').value;
+                const dyspnea = document.querySelector('input[name="dyspnea"]:checked').value;
+                const vitalCapacity = document.querySelector('input[name="vital-capacity"]:checked').value;
+                const upperLimbs = document.querySelector('input[name="upper-limbs"]:checked').value;
+                const lowerLimbs = document.querySelector('input[name="lower-limbs"]:checked').value;
+                
+                return `ESCALA DE MIASTENIA GRAVIS (COMPOSITE):
+- Síntomas Oculares: Ptosis ${ptosis}/3, Diplopía ${diplopia}/3
+- Síntomas Bulbares: Masticación ${chewing}/3, Deglución ${swallowing}/3, Habla ${speaking}/3
+- Función Respiratoria: Disnea ${dyspnea}/3, Capacidad Vital ${vitalCapacity}/3
+- Fuerza en Extremidades: Superiores ${upperLimbs}/3, Inferiores ${lowerLimbs}/3
+- Puntuación Total: ${totalScore}/24
+- ${interpretation}`;
+            }
+        });
+    </script>
+</body>
+</html>

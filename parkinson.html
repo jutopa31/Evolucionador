@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Escalas de Parkinson (UPDRS + Diagnóstico)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* Estilos generales (Inspirados en notas_medicas_v10) */
+  :root {
+      --font-sans: 'Inter', Arial, sans-serif;
+      --primary-color: #0066cc; /* Azul principal para Parkinson */
+      --primary-color-dark: #0055aa;
+      --secondary-color: #ff9800; /* Naranja secundario */
+      --secondary-color-dark: #fb8c00;
+      --text-color: #333;
+      --text-color-light: #666;
+      --border-color: #dee2e6;
+      --background-color: #f8f9fa;
+      --section-background: #fff;
+      --header-background: #f1f3f5;
+      --hover-background: #e9ecef;
+      --table-header-background: #e9ecef; /* Fondo cabecera tabla */
+      --border-radius: 6px;
+      --box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --box-shadow-hover: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0; /* Quitar margen por defecto */
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-bottom: 100px; /* Espacio para botón flotante (si lo hubiera) */
+  }
+
+  #app-container {
+      max-width: 950px; /* Un poco más ancho para tablas */
+      margin: 24px auto;
+      padding: 0 15px; /* Padding lateral */
+  }
+
+  /* --- Navegación / Índice --- */
+  #index {
+      background-color: var(--section-background);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      text-align: center;
+  }
+    #index h1 {
+        margin-top: 0;
+        margin-bottom: 25px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+    #index ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap; /* Permitir que los ítems pasen a la siguiente línea */
+        justify-content: center;
+        gap: 10px;
+    }
+    #index li {
+        display: inline; /* Mantener inline */
+    }
+    #index a {
+        text-decoration: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        padding: 8px 15px; /* Más padding */
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        background-color: #fff;
+        transition: all 0.2s ease;
+        font-weight: 500;
+    }
+    #index a:hover {
+        background-color: #e6f0ff; /* Azul claro hover */
+        border-color: var(--primary-color);
+        color: var(--primary-color-dark);
+        box-shadow: var(--box-shadow);
+    }
+
+  /* --- Secciones --- */
+  .section {
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    background-color: var(--section-background);
+    box-shadow: var(--box-shadow);
+    display: none; /* Ocultas por defecto */
+    position: relative; /* Para elementos posicionados dentro */
+    padding-bottom: 70px; /* Espacio para botones fijos inferiores */
+    animation: fadeIn 0.3s ease-in-out; /* Animación de entrada */
+  }
+   @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+   }
+  .section.active { display: block; } /* Mostrar sección activa */
+
+  .sticky-header { /* Cabecera fija dentro de la sección */
+      position: sticky;
+      top: 0; /* Se pega arriba del viewport DEL IFRAME */
+      background-color: rgba(255, 255, 255, 0.95); /* Fondo blanco semi-transparente */
+      backdrop-filter: blur(5px); /* Efecto blur */
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 10;
+      padding: 12px 15px; /* Padding */
+      margin-bottom: 15px; /* Separación del contenido */
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Sombra sutil */
+  }
+    .section-nav { /* Contenedor dentro de sticky-header */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+     .section-nav h2 {
+         margin: 0;
+         font-size: 1.3em;
+         font-weight: 600;
+         color: var(--primary-color);
+     }
+     .score-display {
+         font-weight: 600;
+         font-size: 1.1em;
+         color: var(--primary-color-dark);
+         background-color: #e6f0ff;
+         padding: 5px 10px;
+         border-radius: var(--border-radius);
+     }
+      .save-indicator { /* Indicador "Guardado" */
+        margin-left: 15px;
+        color: var(--primary-color);
+        font-size: 0.9em;
+        font-style: italic;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+     .save-indicator.visible { opacity: 1; }
+
+
+  /* --- Tablas --- */
+  table {
+      border-collapse: collapse;
+      width: 95%; /* Ligeramente menos ancho */
+      margin: 20px auto;
+      border: 1px solid var(--border-color); /* Borde exterior */
+  }
+  th, td {
+      border: 1px solid var(--border-color);
+      padding: 10px 12px; /* Más padding */
+      text-align: left;
+      vertical-align: middle; /* Alinear verticalmente */
+  }
+  th {
+      background-color: var(--table-header-background);
+      font-weight: 500; /* Peso medio */
+      color: var(--text-color);
+  }
+  td:last-child { /* Celda de puntuación/input */
+      text-align: center;
+      width: 150px; /* Ancho fijo para inputs */
+  }
+    /* Estilo para labels dentro de celdas */
+    td label {
+        margin-right: 15px;
+        cursor: pointer;
+        font-size: 0.95em;
+    }
+     td label input[type="radio"] {
+         margin-right: 5px;
+         vertical-align: middle;
+     }
+
+
+  /* --- Tooltips --- */
+  .tooltip { position: relative; display: inline-block; cursor: help; border-bottom: 1px dotted var(--text-color-light); }
+  .tooltip .tooltiptext {
+      visibility: hidden; width: 220px; background-color: #444; color: #fff;
+      text-align: left; border-radius: var(--border-radius); padding: 8px 10px;
+      position: absolute; z-index: 1; bottom: 130%; /* Posición arriba */
+      left: 50%; margin-left: -110px; /* Centrado */
+      opacity: 0; transition: opacity 0.3s ease; font-size: 0.9em; line-height: 1.4;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+    .tooltip .tooltiptext::after { /* Flecha del tooltip */
+      content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+      border-width: 5px; border-style: solid; border-color: #444 transparent transparent transparent;
+  }
+  .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+  /* --- Inputs y Formularios --- */
+  input[type="number"] {
+      width: 50px; /* Ancho ajustado */
+      padding: 6px 8px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      font-size: 1em;
+  }
+    input[type="number"]:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2); }
+  /* Inputs Izq/Der */
+  .side-by-side-input { display: inline-block; margin: 0 5px; }
+  .side-by-side-input label { font-size: 0.85em; color: var(--text-color-light); margin-right: 3px;}
+
+  input[type="text"], select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      box-sizing: border-box; /* Incluir padding/border en el ancho */
+      font-family: var(--font-sans);
+      font-size: 1em;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+    input[type="text"]:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+  textarea { resize: vertical; line-height: 1.6; min-height: 80px; }
+  select { appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.6-3.6%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right .7em top 50%; background-size: .65em auto; padding-right: 2em; }
+
+  /* --- Botones de Acción (dentro de secciones) --- */
+  .section-actions {
+      position: absolute; /* Fijar al fondo de la sección */
+      bottom: 0; left: 0; right: 0;
+      background-color: #fdfdfd; /* Ligeramente diferente al fondo */
+      padding: 12px 15px; border-top: 1px solid var(--border-color);
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.05); text-align: center;
+      z-index: 5; /* Debajo de sticky header */
+  }
+    .section-actions button {
+        margin: 0 10px; padding: 8px 18px; /* Más padding */
+        background-color: var(--primary-color); color: white;
+        border: none; font-weight: 500;
+        border-radius: var(--border-radius); /* Añadido borde redondeado */
+        cursor: pointer; /* Asegurar cursor pointer */
+        transition: background-color 0.2s ease; /* Transición suave */
+    }
+     .section-actions button:hover { background-color: var(--primary-color-dark); }
+     .section-actions button.secondary { /* Botón secundario (Volver) */
+         background-color: #f1f3f5; color: var(--text-color-light);
+         border: 1px solid #ced4da;
+     }
+      .section-actions button.secondary:hover {
+          background-color: #e9ecef; border-color: #adb5bd; color: var(--text-color);
+      }
+
+   /* --- Feedback Temporal --- */
+   #feedback-message {
+       position: fixed;
+       bottom: 20px; /* Más abajo */
+       left: 50%;
+       transform: translateX(-50%);
+       background-color: rgba(0, 0, 0, 0.75);
+       color: white;
+       padding: 10px 20px;
+       border-radius: var(--border-radius);
+       z-index: 110;
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+   }
+   #feedback-message.visible {
+       opacity: 1;
+       visibility: visible;
+       transition: opacity 0.3s ease, visibility 0s linear 0s;
+   }
+
+   /* --- Estilos para el Modal de Previsualización --- */
+   #previewModal {
+        display: none; /* Oculto por defecto */
+        position: fixed; /* Fijo en la pantalla */
+        inset: 0; /* Cubre toda la pantalla */
+        background-color: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+        z-index: 1000; /* Encima de otros elementos */
+        /* display: flex; */ /* Se controla con JS */
+        align-items: center;
+        justify-content: center;
+        padding: 20px; /* Espacio alrededor */
+        animation: fadeInModal 0.3s ease; /* Animación de entrada */
+    }
+    @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+
+    #previewModal .modal-content {
+        background-color: white;
+        padding: 25px 30px;
+        border-radius: 8px;
+        max-width: 600px; /* Ancho máximo */
+        width: 90%; /* Ancho adaptable */
+        max-height: 85vh; /* Altura máxima */
+        display: flex;
+        flex-direction: column; /* Organizar contenido verticalmente */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        transform: scale(0.95); /* Efecto escala inicial */
+        opacity: 0;
+        animation: scaleUpModal 0.3s ease 0.1s forwards; /* Animación de entrada */
+    }
+     @keyframes scaleUpModal { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    #previewModal h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+    #previewModal pre {
+        white-space: pre-wrap; /* Respetar saltos de línea y espacios */
+        word-wrap: break-word; /* Romper palabras largas */
+        background-color: #f8f9fa; /* Fondo ligero */
+        border: 1px solid #eee;
+        padding: 15px; /* Más padding */
+        border-radius: 4px;
+        max-height: 55vh; /* Altura máxima del texto */
+        overflow-y: auto; /* Scroll si el texto es muy largo */
+        font-size: 0.9em;
+        line-height: 1.6;
+        color: #444; /* Color de texto ligeramente más oscuro */
+    }
+    #previewModal .modal-actions {
+        text-align: right;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid var(--border-color);
+    }
+    #previewModal .modal-actions button {
+        margin-left: 10px;
+        padding: 8px 16px; /* Botones un poco más grandes */
+        font-weight: 500;
+        cursor: pointer;
+        border-radius: var(--border-radius); /* Añadido */
+        border: 1px solid transparent; /* Añadido */
+    }
+     /* Estilos específicos para botones del modal */
+    #confirmCopyBtn {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+    }
+     #confirmCopyBtn:hover { background-color: var(--primary-color-dark); }
+    #cancelCopyBtn {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: #fff;
+    }
+     #cancelCopyBtn:hover { background-color: #5a6268; }
+
+
+</style>
+</head>
+<body>
+    <div id="app-container">
+
+        <div id="index" class="section active">
+            <h1>Escalas de Parkinson</h1>
+            <nav>
+                <ul>
+                    <li><a data-action="showSection" data-target="updrs1">UPDRS I <span class="hotkey">(Ctrl+1)</span></a></li>
+                    <li><a data-action="showSection" data-target="updrs2">UPDRS II <span class="hotkey">(Ctrl+2)</span></a></li>
+                    <li><a data-action="showSection" data-target="updrs3">UPDRS III <span class="hotkey">(Ctrl+3)</span></a></li>
+                    <li><a data-action="showSection" data-target="updrs4">UPDRS IV <span class="hotkey">(Ctrl+4)</span></a></li>
+                    <li><a data-action="showSection" data-target="parkinsonDiagnosis">Diagnóstico EP <span class="hotkey">(Ctrl+5)</span></a></li>
+                </ul>
+            </nav>
+            <p style="margin-top: 30px; font-size: 0.9em; color: var(--text-color-light);">
+                Selecciona una sección para completar o revisar. Los datos se guardan automáticamente en esta sesión.
+            </p>
+        </div>
+
+        <div id="updrs1" class="section" data-key="updrs1" data-score-start="1" data-score-end="4" data-max-score="16">
+            <div class="sticky-header">
+                <div class="section-nav">
+                    <h2>UPDRS I: Estado Mental</h2>
+                    <div>
+                        <span class="score-display">Total: <span id="updrs1-score">0/16</span></span>
+                        <span class="save-indicator" id="save-updrs1">Guardado</span>
+                    </div>
+                </div>
+            </div>
+            <table>
+                <thead><tr><th>Ítem</th><th>Puntuación</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="tooltip">1. Alteración del Intelecto<span class="tooltiptext">0: Nula, 1: Leve, 2: Moderada, 3: Grave, 4: Muy grave</span></span></td><td><input type="number" id="s1" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">2. Trastornos del Pensamiento<span class="tooltiptext">0: No hay, 1: Ensueños, 2: Alucinaciones benignas, 3: Alucinaciones frecuentes, 4: Psicosis</span></span></td><td><input type="number" id="s2" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">3. Depresión<span class="tooltiptext">0: No hay, 1: Tristeza leve, 2: Depresión sostenida, 3: Con síntomas vegetativos, 4: Psicosis</span></span></td><td><input type="number" id="s3" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">4. Motivación - Iniciativa<span class="tooltiptext">0: Normal, 1: Menos activa, 2: Pérdida en opcionales, 3: Pérdida en rutinarias, 4: Aislado</span></span></td><td><input type="number" id="s4" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                </tbody>
+            </table>
+            <div class="section-actions">
+                <button data-action="previewAndCopy" data-target="updrs1">Previsualizar y Copiar</button>
+                <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+            </div>
+        </div>
+
+        <div id="updrs2" class="section" data-key="updrs2" data-score-start="5" data-score-end="17" data-max-score="52">
+            <div class="sticky-header">
+                <div class="section-nav">
+                    <h2>UPDRS II: Actividades Vida Diaria</h2>
+                     <div>
+                        <span class="score-display">Total: <span id="updrs2-score">0/52</span></span>
+                        <span class="save-indicator" id="save-updrs2">Guardado</span>
+                    </div>
+                </div>
+            </div>
+            <table>
+                 <thead><tr><th>Ítem</th><th>Puntuación</th></tr></thead>
+                 <tbody>
+                    <tr><td><span class="tooltip">5. Lenguaje<span class="tooltiptext">0: Normal, 1: Leve alterado, 2: Moderado, 3: Muy alterado, 4: Ininteligible</span></span></td><td><input type="number" id="s5" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">6. Salivación<span class="tooltiptext">0: Normal, 1: Exceso leve, 2: Moderado, 3: Marcado, 4: Babeo constante</span></span></td><td><input type="number" id="s6" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">7. Deglución<span class="tooltiptext">0: Normal, 1: Rara vez, 2: Ocasional, 3: Dieta blanda, 4: Sonda</span></span></td><td><input type="number" id="s7" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">8. Escritura<span class="tooltiptext">0: Normal, 1: Lenta leve, 2: Moderada, 3: Muy alterada, 4: Mayoría ilegible</span></span></td><td><input type="number" id="s8" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">9. Cortar Alimentos<span class="tooltiptext">0: Normal, 1: Lento, 2: Torpe, 3: Necesita ayuda, 4: Alimentado</span></span></td><td><input type="number" id="s9" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">10. Vestido<span class="tooltiptext">0: Normal, 1: Lento, 2: Ayuda ocasional, 3: Mucha ayuda, 4: Incapacitado</span></span></td><td><input type="number" id="s10" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">11. Higiene<span class="tooltiptext">0: Normal, 1: Lento, 2: Ayuda parcial, 3: Ayuda total, 4: Dependiente</span></span></td><td><input type="number" id="s11" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">12. Vueltas en Cama<span class="tooltiptext">0: Normal, 1: Lento, 2: Dificultad, 3: Inicia solo, 4: Incapacitado</span></span></td><td><input type="number" id="s12" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">13. Caídas<span class="tooltiptext">0: Ninguna, 1: Rara, 2: Ocasional, 3: Una al día, 4: Más de una</span></span></td><td><input type="number" id="s13" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">14. Congelación al Caminar<span class="tooltiptext">0: No hay, 1: Rara, 2: Ocasional, 3: Frecuente, 4: Caídas frecuentes</span></span></td><td><input type="number" id="s14" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">15. Caminar<span class="tooltiptext">0: Normal, 1: Leve dificultad, 2: Moderada, 3: Grave, 4: No puede</span></span></td><td><input type="number" id="s15" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">16. Temblor<span class="tooltiptext">0: Ausente, 1: Discreto, 2: Moderado, 3: Intenso, 4: Marcado</span></span></td><td><input type="number" id="s16" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                    <tr><td><span class="tooltip">17. Síntomas Sensoriales<span class="tooltiptext">0: Normal, 1: Ocasional, 2: Frecuente leve, 3: Doloroso, 4: Dolor extremo</span></span></td><td><input type="number" id="s17" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                 </tbody>
+            </table>
+            <div class="section-actions">
+                 <button data-action="previewAndCopy" data-target="updrs2">Previsualizar y Copiar</button>
+                 <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+            </div>
+        </div>
+
+        <div id="updrs3" class="section" data-key="updrs3" data-score-start="18" data-score-end="34" data-max-score="68">
+             <div class="sticky-header">
+                 <div class="section-nav">
+                     <h2>UPDRS III: Aspectos Motores</h2>
+                      <div>
+                         <span class="score-display">Total: <span id="updrs3-score">0/68</span></span>
+                         <span class="save-indicator" id="save-updrs3">Guardado</span>
+                     </div>
+                 </div>
+             </div>
+             <table>
+                 <thead><tr><th>Ítem</th><th>Puntuación</th></tr></thead>
+                 <tbody>
+                     <tr><td><span class="tooltip">18. Lenguaje<span class="tooltiptext">0: Normal, 1: Pérdida leve, 2: Monótono, 3: Difícil de entender, 4: Ininteligible</span></span></td><td><input type="number" id="s18" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">19. Expresión Facial<span class="tooltiptext">0: Normal, 1: Hipomimia mínima, 2: Leve anormal, 3: Hipomimia moderada, 4: Cara de máscara</span></span></td><td><input type="number" id="s19" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">20. Temblor de Reposo (MMSS)<span class="tooltiptext">0: Ausente, 1: Leve, 2: Suave persistente, 3: Moderado constante, 4: Marcado constante</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s20L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s20R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">21. Temblor (MMII)<span class="tooltiptext">0: Ausente, 1: Leve, 2: Suave persistente, 3: Moderado constante, 4: Marcado constante</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s21L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s21R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">22. Temblor de Acción (Manos)<span class="tooltiptext">0: Ausente, 1: Leve con acción, 2: Moderado con acción, 3: Moderado en postura, 4: Gran amplitud</span></span></td><td><input type="number" id="s22" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">23. Rigidez Axial<span class="tooltiptext">0: Ausente, 1: Leve, 2: Discreta a moderada, 3: Intensa, 4: Muy intensa</span></span></td><td><input type="number" id="s23" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">24. Rigidez (MMSS)<span class="tooltiptext">0: Ausente, 1: Leve, 2: Discreta a moderada, 3: Intensa, 4: Muy intensa</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s24L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s24R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">25. Rigidez (MMII)<span class="tooltiptext">0: Ausente, 1: Leve, 2: Discreta a moderada, 3: Intensa, 4: Muy intensa</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s25L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s25R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">26. Golpeteo de Dedos<span class="tooltiptext">0: Normal, 1: Lento leve, 2: Moderado, 3: Muy alterado, 4: Apenas puede</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s26L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s26R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">27. Movimientos Alternantes (Manos)<span class="tooltiptext">0: Normal, 1: Lento leve, 2: Moderado, 3: Muy alterado, 4: Apenas puede</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s27L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s27R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">28. Movimientos Rápidos (MMSS)<span class="tooltiptext">0: Normal, 1: Lento leve, 2: Moderado, 3: Muy alterado, 4: Apenas puede</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s28L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s28R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">29. Agilidad (MMII)<span class="tooltiptext">0: Normal, 1: Lento leve, 2: Moderado, 3: Muy alterado, 4: Apenas puede</span></span></td><td><div class="side-by-side-input"><label>Izq:</label><input type="number" id="s29L" min="0" max="4" value="0" data-input-type="score"></div> <div class="side-by-side-input"><label>Der:</label><input type="number" id="s29R" min="0" max="4" value="0" data-input-type="score"></div></td></tr>
+                     <tr><td><span class="tooltip">30. Levantarse de la Silla<span class="tooltiptext">0: Normal, 1: Lento, 2: Usa brazos, 3: Intenta varias veces, 4: Incapaz sin ayuda</span></span></td><td><input type="number" id="s30" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">31. Postura<span class="tooltiptext">0: Normal, 1: Leve encorvada, 2: Moderada, 3: Muy encorvada, 4: Flexión extrema</span></span></td><td><input type="number" id="s31" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">32. Marcha<span class="tooltiptext">0: Normal, 1: Lenta, 2: Dificultad leve, 3: Requiere ayuda, 4: No puede caminar</span></span></td><td><input type="number" id="s32" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">33. Estabilidad Postural<span class="tooltiptext">0: Normal, 1: Retropulsión leve, 2: Caería sin apoyo, 3: Muy inestable, 4: No puede estar de pie</span></span></td><td><input type="number" id="s33" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                     <tr><td><span class="tooltip">34. Bradiquinesia<span class="tooltiptext">0: Ausente, 1: Lentitud mínima, 2: Leve, 3: Moderada, 4: Marcada</span></span></td><td><input type="number" id="s34" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                 </tbody>
+             </table>
+              <div class="section-actions">
+                  <button data-action="previewAndCopy" data-target="updrs3">Previsualizar y Copiar</button>
+                  <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+             </div>
+        </div>
+
+        <div id="updrs4" class="section" data-key="updrs4" data-score-start="35" data-score-end="45" data-max-score="23">
+              <div class="sticky-header">
+                  <div class="section-nav">
+                      <h2>UPDRS IV: Complicaciones Tratamiento</h2>
+                       <div>
+                          <span class="score-display">Total: <span id="updrs4-score">0/23</span></span>
+                          <span class="save-indicator" id="save-updrs4">Guardado</span>
+                      </div>
+                  </div>
+              </div>
+               <table>
+                  <thead><tr><th>Ítem</th><th>Puntuación</th></tr></thead>
+                  <tbody>
+                      <tr><td><span class="tooltip">35. Duración de Discinesias<span class="tooltiptext">0: Ninguna, 1: 1-25% del día, 2: 26-50%, 3: 51-75%, 4: 76-100%</span></span></td><td><input type="number" id="s35" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">36. Incapacidad por Discinesias<span class="tooltiptext">0: No incapacitantes, 1: Leve, 2: Moderada, 3: Severa, 4: Completa</span></span></td><td><input type="number" id="s36" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">37. Discinesias Dolorosas<span class="tooltiptext">0: No dolorosas, 1: Leve, 2: Moderada, 3: Severa, 4: Extrema</span></span></td><td><input type="number" id="s37" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">38. Distonía Matutina<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s38" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">39. Períodos OFF Predecibles<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s39" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">40. Períodos OFF Impredecibles<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s40" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">41. Períodos OFF Súbitos<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s41" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">42. Proporción OFF<span class="tooltiptext">0: Ninguna, 1: 1-25% del día, 2: 26-50%, 3: 51-75%, 4: 76-100%</span></span></td><td><input type="number" id="s42" min="0" max="4" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">43. Anorexia, Náuseas<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s43" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">44. Trastornos del Sueño<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s44" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                      <tr><td><span class="tooltip">45. Ortostatismo Sintomático<span class="tooltiptext">0: No, 1: Sí</span></span></td><td><input type="number" id="s45" min="0" max="1" value="0" data-input-type="score"></td></tr>
+                  </tbody>
+              </table>
+               <div class="section-actions">
+                   <button data-action="previewAndCopy" data-target="updrs4">Previsualizar y Copiar</button>
+                   <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+              </div>
+        </div>
+
+        <div id="parkinsonDiagnosis" class="section" data-key="parkinsonDiagnosis">
+              <div class="sticky-header">
+                  <div class="section-nav">
+                      <h2>Diagnóstico de Parkinson (MDS 2015)</h2>
+                       <div><span class="save-indicator" id="save-parkinsonDiagnosis">Guardado</span></div>
+                  </div>
+              </div>
+              <div style="padding: 0 15px;">
+                  <h3>Síndrome Parkinsoniano - Síntomas presentes</h3>
+                  <table>
+                      <thead><tr><th>Síntoma</th><th>Respuesta</th></tr></thead>
+                      <tbody>
+                          <tr><td>Bradicinesia (movimientos lentos, reducción progresiva en amplitud/velocidad)</td><td><label><input type="radio" name="parkinson1" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="parkinson1" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Temblor en reposo (4-6 Hz)</td><td><label><input type="radio" name="parkinson2" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="parkinson2" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Rigidez muscular</td><td><label><input type="radio" name="parkinson3" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="parkinson3" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                      </tbody>
+                  </table>
+                  <h3>Criterios de Exclusión Absoluta</h3>
+                  <table>
+                       <thead><tr><th>Criterio</th><th>Respuesta</th></tr></thead>
+                       <tbody>
+                          <tr><td>Signos cerebelosos prominentes (ataxia, dismetría)</td><td><label><input type="radio" name="exclusion1" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion1" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Parálisis supranuclear de la mirada vertical</td><td><label><input type="radio" name="exclusion2" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion2" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Parkinsonismo confinado a piernas >3 años</td><td><label><input type="radio" name="exclusion3" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion3" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Disautonomía severa en primeros 5 años</td><td><label><input type="radio" name="exclusion4" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion4" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Ausencia de respuesta a levodopa pese a dosis altas</td><td><label><input type="radio" name="exclusion5" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion5" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Movimientos distónicos prominentes en primeros años</td><td><label><input type="radio" name="exclusion6" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion6" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Neuroimagen funcional normal (SPECT-DAT normal)</td><td><label><input type="radio" name="exclusion7" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="exclusion7" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                       </tbody>
+                  </table>
+                  <h3>Criterios de Apoyo</h3>
+                  <table>
+                       <thead><tr><th>Criterio</th><th>Respuesta</th></tr></thead>
+                       <tbody>
+                          <tr><td>Inicio asimétrico de los síntomas</td><td><label><input type="radio" name="support1" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support1" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Temblor en reposo presente</td><td><label><input type="radio" name="support2" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support2" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Respuesta marcada a levodopa (>70% mejoría)</td><td><label><input type="radio" name="support3" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support3" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Discinesias inducidas por levodopa</td><td><label><input type="radio" name="support4" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support4" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Curso progresivo de la enfermedad</td><td><label><input type="radio" name="support5" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support5" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Hiposmia documentada</td><td><label><input type="radio" name="support6" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support6" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Alteración en gammagrafía MIBG</td><td><label><input type="radio" name="support7" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="support7" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                       </tbody>
+                  </table>
+                  <h3>Banderas Rojas</h3>
+                  <table>
+                       <thead><tr><th>Bandera Roja</th><th>Respuesta</th></tr></thead>
+                       <tbody>
+                          <tr><td>Progresión muy rápida (silla de ruedas en <5 años)</td><td><label><input type="radio" name="redflag1" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag1" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Disautonomía severa temprana</td><td><label><input type="radio" name="redflag2" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag2" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Caídas recurrentes en primeros 3 años</td><td><label><input type="radio" name="redflag3" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag3" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Rigidez axial prominente desde el inicio</td><td><label><input type="radio" name="redflag4" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag4" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Ataxia cerebelosa</td><td><label><input type="radio" name="redflag5" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag5" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Falta de progresión después de 5 años</td><td><label><input type="radio" name="redflag6" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag6" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                          <tr><td>Deterioro cognitivo severo en el primer año</td><td><label><input type="radio" name="redflag7" value="si" data-input-type="diagnosis"> Sí</label><label><input type="radio" name="redflag7" value="no" checked data-input-type="diagnosis"> No</label></td></tr>
+                       </tbody>
+                  </table>
+              </div>
+              <div class="section-actions">
+                   <button data-action="previewAndCopy" data-target="parkinsonDiagnosis">Previsualizar y Copiar</button>
+                   <button data-action="returnToIndex" class="secondary">Volver al Índice</button>
+             </div>
+        </div>
+
+    </div> <div id="previewModal" style="display: none;"> <div class="modal-content">
+            <h3>Previsualizar Texto a Copiar</h3>
+            <pre id="previewText"></pre>
+            <div class="modal-actions">
+                <button id="cancelCopyBtn" class="secondary">Cancelar</button>
+                <button id="confirmCopyBtn" class="btn-primary">Copiar y Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedback-message"></div>
+
+<script type="module">
+/* ══════════ Configuración y Estado ══════════ */
+const Sections = [ // Definir secciones para navegación y guardado
+    { id: 'updrs1', label: 'UPDRS I', scoreStart: 1, scoreEnd: 4, maxScore: 16 },
+    { id: 'updrs2', label: 'UPDRS II', scoreStart: 5, scoreEnd: 17, maxScore: 52 },
+    { id: 'updrs3', label: 'UPDRS III', scoreStart: 18, scoreEnd: 34, maxScore: 68 },
+    { id: 'updrs4', label: 'UPDRS IV', scoreStart: 35, scoreEnd: 45, maxScore: 23 },
+    { id: 'parkinsonDiagnosis', label: 'Diagnóstico EP' }
+];
+
+// Items con puntuación Izquierda/Derecha en UPDRS III
+const bilateralItems = [20, 21, 24, 25, 26, 27, 28, 29];
+
+let saveTimeout; // Para debounce (retrasar guardado)
+
+// Referencias al Modal (se asignarán en initApp)
+let previewModal, previewText, confirmCopyBtn, cancelCopyBtn;
+let textToCopyGlobal = ''; // Variable para guardar temporalmente el texto
+let successMessageGlobal = ''; // Variable para guardar temporalmente el mensaje
+
+/* ══════════ Funciones Principales ══════════ */
+
+/** Muestra una sección específica y oculta las demás */
+function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.toggle('active', section.id === sectionId);
+    });
+    // Scroll suave al inicio de la página (dentro del iframe) al cambiar de sección
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/** Calcula y actualiza el puntaje total mostrado para una sección UPDRS */
+function updateTotalScore(sectionId) {
+    const sectionConfig = Sections.find(s => s.id === sectionId);
+    // Salir si no es una sección UPDRS con puntaje definido
+    if (!sectionConfig || !sectionConfig.scoreStart) return;
+
+    const { scoreStart, scoreEnd } = sectionConfig;
+    let total = 0;
+
+    // Iterar sobre los ítems de la sección
+    for (let i = scoreStart; i <= scoreEnd; i++) {
+        if (bilateralItems.includes(i)) { // Si el ítem tiene puntaje Izq/Der
+            const leftInput = document.getElementById(`s${i}L`);
+            const rightInput = document.getElementById(`s${i}R`);
+            total += (parseInt(leftInput?.value) || 0) + (parseInt(rightInput?.value) || 0);
+        } else { // Si es un ítem con puntaje único
+            const input = document.getElementById(`s${i}`);
+            total += parseInt(input?.value) || 0;
+        }
+    }
+
+    // Actualizar el texto del puntaje en la cabecera de la sección
+    const scoreSpan = document.getElementById(`${sectionId}-score`);
+    if (scoreSpan) {
+        scoreSpan.textContent = `${total}/${sectionConfig.maxScore}`;
+    }
+}
+
+/** Genera el texto formateado con las puntuaciones de una sección UPDRS */
+function copyScores(sectionId) {
+    const sectionConfig = Sections.find(s => s.id === sectionId);
+    if (!sectionConfig || !sectionConfig.scoreStart) return ""; // Devuelve string vacío si falla
+
+    const { scoreStart, scoreEnd, maxScore } = sectionConfig;
+    let output = `${sectionConfig.label.toUpperCase()}:\n`; // Título de la sección
+    let total = 0;
+    const items = getAllItemsMap(); // Obtener mapa con nombres de ítems { id: nombre }
+
+    // Iterar sobre los ítems para construir el texto
+    for (let i = scoreStart; i <= scoreEnd; i++) {
+        const itemName = items[i] || `Ítem ${i}`; // Nombre del ítem o genérico
+        if (bilateralItems.includes(i)) { // Ítem bilateral
+            const left = parseInt(document.getElementById(`s${i}L`)?.value) || 0;
+            const right = parseInt(document.getElementById(`s${i}R`)?.value) || 0;
+            output += `${itemName}: ${left}/${right}\n`; // Formato Izq/Der
+            total += left + right;
+        } else { // Ítem único
+            const score = parseInt(document.getElementById(`s${i}`)?.value) || 0;
+            output += `${itemName}: ${score}\n`;
+            total += score;
+        }
+    }
+    output += `\nTotal ${sectionConfig.label}: ${total}/${maxScore}`; // Añadir total
+    return output; // Devolver el texto generado
+}
+
+/** Evalúa y genera el texto del resultado del diagnóstico de Parkinson (MDS 2015) */
+function copyParkinsonDiagnosisResult() {
+    // Evaluar criterios principales (Síndrome Parkinsoniano)
+    const brady = document.querySelector('input[name="parkinson1"]:checked')?.value === 'si';
+    const tremor = document.querySelector('input[name="parkinson2"]:checked')?.value === 'si';
+    const rigidity = document.querySelector('input[name="parkinson3"]:checked')?.value === 'si';
+    const parkinsonSyndrome = brady && (tremor || rigidity);
+
+    // Evaluar criterios de exclusión
+    const exclusions = [ { name: 'exclusion1', label: 'Signos cerebelosos' }, { name: 'exclusion2', label: 'Parálisis mirada vertical' }, { name: 'exclusion3', label: 'Parkinsonismo piernas >3a' }, { name: 'exclusion4', label: 'Disautonomía severa <5a' }, { name: 'exclusion5', label: 'No respuesta levodopa' }, { name: 'exclusion6', label: 'Distonía prominente <años' }, { name: 'exclusion7', label: 'SPECT-DAT normal' } ];
+    const presentExclusions = exclusions.filter(e => document.querySelector(`input[name="${e.name}"]:checked`)?.value === 'si').map(e => e.label);
+
+    // Evaluar criterios de apoyo
+    const supports = [ { name: 'support1', label: 'Inicio asimétrico' }, { name: 'support2', label: 'Temblor reposo' }, { name: 'support3', label: 'Respuesta levodopa' }, { name: 'support4', label: 'Discinesias levodopa' }, { name: 'support5', label: 'Curso progresivo' }, { name: 'support6', label: 'Hiposmia' }, { name: 'support7', label: 'Alt. MIBG' } ];
+    const presentSupports = supports.filter(s => document.querySelector(`input[name="${s.name}"]:checked`)?.value === 'si').map(s => s.label);
+    const supportCount = presentSupports.length;
+
+    // Evaluar banderas rojas
+    const redFlags = [ { name: 'redflag1', label: 'Progresión rápida' }, { name: 'redflag2', label: 'Disautonomía temprana' }, { name: 'redflag3', label: 'Caídas <3a' }, { name: 'redflag4', label: 'Rigidez axial' }, { name: 'redflag5', label: 'Ataxia cerebelosa' }, { name: 'redflag6', label: 'No progresión >5a' }, { name: 'redflag7', label: 'Cognitivo severo <1a' } ];
+    const presentRedFlags = redFlags.filter(r => document.querySelector(`input[name="${r.name}"]:checked`)?.value === 'si').map(r => r.label);
+    const redFlagCount = presentRedFlags.length;
+
+    // Determinar resultado diagnóstico basado en criterios MDS 2015
+    let result = '';
+    if (!parkinsonSyndrome) { result = 'Descartar EP - No cumple síndrome parkinsoniano'; }
+    else if (presentExclusions.length > 0) { result = 'Descartar EP - Criterios de exclusión presentes'; }
+    else if (supportCount >= 2 && redFlagCount === 0) { result = 'EP clínicamente establecida'; }
+    else if (redFlagCount <= 2 && supportCount > redFlagCount) { result = 'EP clínicamente probable'; }
+    else { result = 'Descartar EP - No cumple criterios suficientes'; }
+
+    // Formatear el texto final
+    const output = `Diagnóstico Parkinson (MDS 2015)\n` +
+                   `---------------------------------\n` +
+                   `Síndrome Parkinsoniano: ${parkinsonSyndrome ? 'Sí' : 'No'}\n` +
+                   `Exclusiones: ${presentExclusions.length > 0 ? presentExclusions.join(', ') : 'Ninguna'}\n` +
+                   `Apoyo: ${presentSupports.length > 0 ? presentSupports.join(', ') : 'Ninguno'} (${supportCount})\n` +
+                   `Banderas Rojas: ${presentRedFlags.length > 0 ? presentRedFlags.join(', ') : 'Ninguna'} (${redFlagCount})\n` +
+                   `\nResultado: ${result}`;
+
+    return output; // Devolver el texto generado
+}
+
+/** Función genérica para copiar al portapapeles y mostrar feedback */
+function copyToClipboard(text, message) {
+    navigator.clipboard.writeText(text).then(() => {
+        showFeedback(message || "Texto copiado."); // Muestra mensaje de éxito
+    }).catch(err => {
+        console.error('Error al copiar: ', err);
+        showFeedback("Error al copiar texto.", true); // Muestra mensaje de error
+    });
+}
+
+/** Muestra un mensaje temporal en la parte inferior de la pantalla */
+function showFeedback(message, isError = false) {
+    const feedback = document.getElementById('feedback-message');
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.style.backgroundColor = isError ? '#d32f2f' : 'rgba(0, 0, 0, 0.75)'; // Rojo para error
+    feedback.classList.add('visible');
+    // Ocultar después de 2 segundos
+    setTimeout(() => {
+        feedback.classList.remove('visible');
+    }, 2000);
+}
+
+/** Genera un mapa { id_item: nombre_item } para todos los ítems de UPDRS */
+function getAllItemsMap() {
+    // Mapeo completo de IDs a nombres de ítems
+    return {
+        1: "Alteración del Intelecto", 2: "Trastornos del Pensamiento", 3: "Depresión", 4: "Motivación - Iniciativa",
+        5: "Lenguaje (AVD)", 6: "Salivación", 7: "Deglución", 8: "Escritura", 9: "Cortar Alimentos", 10: "Vestido",
+        11: "Higiene", 12: "Vueltas en Cama", 13: "Caídas", 14: "Congelación al Caminar", 15: "Caminar", 16: "Temblor (AVD)", 17: "Síntomas Sensoriales",
+        18: "Lenguaje (Motor)", 19: "Expresión Facial", 20: "Temblor de Reposo (MMSS)", 21: "Temblor (MMII)", 22: "Temblor de Acción (Manos)", 23: "Rigidez Axial",
+        24: "Rigidez (MMSS)", 25: "Rigidez (MMII)", 26: "Golpeteo de Dedos", 27: "Movimientos Alternantes (Manos)", 28: "Movimientos Rápidos (MMSS)", 29: "Agilidad (MMII)",
+        30: "Levantarse de la Silla", 31: "Postura", 32: "Marcha", 33: "Estabilidad Postural", 34: "Bradiquinesia",
+        35: "Duración de Discinesias", 36: "Incapacidad por Discinesias", 37: "Discinesias Dolorosas", 38: "Distonía Matutina",
+        39: "Períodos OFF Predecibles", 40: "Períodos OFF Impredecibles", 41: "Períodos OFF Súbitos", 42: "Proporción OFF", 43: "Anorexia, Náuseas", 44: "Trastornos del Sueño", 45: "Ortostatismo Sintomático"
+    };
+}
+
+/* ══════════ Auto-Guardado y Carga (usando sessionStorage) ══════════ */
+
+/** Guarda un valor en sessionStorage con debounce (retraso) */
+function saveState(key, value) {
+  clearTimeout(saveTimeout); // Cancela el guardado anterior si hay uno pendiente
+  saveTimeout = setTimeout(() => {
+    sessionStorage.setItem(key, value); // Guarda el valor
+    // Muestra indicador visual de guardado
+    const sectionKey = document.getElementById(key)?.closest('.section')?.id || key; // Intenta obtener ID de sección
+    const indicator = document.getElementById(`save-${sectionKey}`);
+    if (indicator) {
+        indicator.classList.add('visible');
+        setTimeout(() => indicator.classList.remove('visible'), 1500); // Oculta después de 1.5s
+    }
+    // console.log(`Guardado ${key}`); // Descomentar para depuración
+  }, 750); // Espera 750ms de inactividad antes de guardar
+}
+
+/** Carga todo el estado guardado desde sessionStorage al iniciar */
+function loadSavedState() {
+    console.log("Cargando estado guardado de sessionStorage...");
+    // Cargar inputs numéricos (scores UPDRS)
+    document.querySelectorAll('input[type="number"][id^="s"]').forEach(input => {
+        const savedValue = sessionStorage.getItem(input.id);
+        if (savedValue !== null) input.value = savedValue;
+    });
+
+    // Cargar radio buttons (diagnóstico)
+    document.querySelectorAll('input[type="radio"][data-input-type="diagnosis"]').forEach(radio => {
+        const savedValue = sessionStorage.getItem(radio.name);
+        if (savedValue !== null) {
+            radio.checked = (radio.value === savedValue);
+        } else if (radio.checked) {
+            // Si no hay valor guardado, guarda el valor por defecto (el que está 'checked' en HTML)
+            saveState(radio.name, radio.value);
+        }
+    });
+
+    // Recalcular y mostrar scores iniciales después de cargar
+    ['updrs1', 'updrs2', 'updrs3', 'updrs4'].forEach(id => updateTotalScore(id));
+    console.log("Estado cargado.");
+}
+
+/* ══════════ Comunicación con Ventana Padre (index.html) ══════════ */
+
+/** Envía un mensaje a la ventana padre (index.html) */
+function sendTextToParent(textToSend) {
+    // Verifica que esta ventana esté dentro de un iframe
+    if (window.parent && window.parent !== window) {
+        // Envía el mensaje con tipo 'updrsText' y el texto
+        window.parent.postMessage({ type: 'updrsText', text: textToSend }, '*');
+        // El '*' significa que se puede enviar a cualquier origen.
+        // En producción, deberías reemplazar '*' con el origen esperado de index.html por seguridad.
+        console.log("Mensaje enviado al padre:", textToSend ? textToSend.substring(0, 50) + '...' : '(Mensaje vacío)');
+    } else {
+        console.error("No se pudo encontrar la ventana padre (index.html) para enviar el mensaje.");
+        // Fallback: Si no está en iframe, intenta copiar al portapapeles
+        if (textToSend) { // Solo si hay texto que copiar
+             copyToClipboard(textToSend, "Texto copiado (no se pudo enviar a la ventana principal).");
+        }
+    }
+}
+
+
+/* ══════════ Configuración de Event Listeners ══════════ */
+function setupEventListeners() {
+    const appContainer = document.getElementById('app-container');
+    if (!appContainer) return;
+
+    // --- Listener General (Delegación) ---
+    appContainer.addEventListener('click', handleAppClick);
+    appContainer.addEventListener('change', handleAppChange); // Para radios y selects
+    appContainer.addEventListener('input', handleAppInput); // Para textareas y text inputs
+
+    // --- Listeners del Modal ---
+    if (confirmCopyBtn) {
+        confirmCopyBtn.addEventListener('click', handleConfirmCopy);
+    }
+    if (cancelCopyBtn) {
+        cancelCopyBtn.addEventListener('click', () => {
+            if(previewModal) previewModal.style.display = 'none';
+        });
+    }
+     // Cerrar modal con clic fuera
+    if (previewModal) {
+        previewModal.addEventListener('click', (event) => {
+            if (event.target === previewModal) {
+                previewModal.style.display = 'none';
+            }
+        });
+    }
+     // Cerrar modal con tecla Escape
+     document.addEventListener('keydown', (event) => {
+         if (event.key === 'Escape' && previewModal && previewModal.style.display === 'flex') {
+             previewModal.style.display = 'none';
+         }
+     });
+
+
+    // --- Listener Hotkeys ---
+    document.addEventListener('keydown', handleHotkeys);
+}
+
+/* ══════════ Manejadores de Eventos Específicos ══════════ */
+
+/** Manejador principal para clics delegados dentro de #app-container */
+function handleAppClick(ev) {
+    const targetElement = ev.target;
+    const actionElement = targetElement.closest('[data-action]');
+    if (!actionElement) return;
+
+    const action = actionElement.dataset.action;
+    const targetId = actionElement.dataset.target; // ID de la sección objetivo
+
+    switch (action) {
+        case 'showSection': // Mostrar una sección
+            if (targetId) showSection(targetId);
+            break;
+        case 'previewAndCopy': // Acción para abrir el modal de previsualización
+            if (targetId) {
+                let textToPreview = "";
+                let message = "";
+                if (targetId === 'parkinsonDiagnosis') {
+                    textToPreview = copyParkinsonDiagnosisResult(); // Obtener texto diagnóstico
+                    message = "Resultado diagnóstico copiado.";
+                } else { // Es una escala UPDRS
+                    textToPreview = copyScores(targetId); // Obtener texto de la escala
+                    message = `Puntuación ${targetId.toUpperCase()} copiada.`;
+                }
+                // Guardar texto y mensaje para usar en el botón de confirmación
+                textToCopyGlobal = textToPreview;
+                successMessageGlobal = message;
+                // Mostrar en el modal
+                if(previewText) previewText.textContent = textToPreview;
+                if(previewModal) previewModal.style.display = 'flex'; // Mostrar modal
+            }
+            break;
+         case 'returnToIndex': // Volver al índice (y cerrar overlay)
+             showSection('index'); // Muestra el índice dentro del iframe
+             sendTextToParent(''); // Envía mensaje vacío para cerrar el overlay en index.html
+             break;
+        // Añadir más casos si es necesario
+    }
+}
+
+/** Manejador para el botón "Copiar y Enviar" del modal */
+function handleConfirmCopy() {
+    if (textToCopyGlobal) {
+        copyToClipboard(textToCopyGlobal, successMessageGlobal); // Copia al portapapeles local
+        sendTextToParent(textToCopyGlobal); // Envía el texto al padre (index.html)
+    }
+    if(previewModal) previewModal.style.display = 'none'; // Cierra el modal
+    // Limpiar variables globales
+    textToCopyGlobal = '';
+    successMessageGlobal = '';
+}
+
+
+/** Manejador para cambios en radios y selects (guarda estado) */
+function handleAppChange(ev) {
+    const target = ev.target;
+
+    // Guardar estado si es radio o select
+    if (target.type === 'radio' && target.checked) {
+        saveState(target.name, target.value);
+    } else if (target.tagName === 'SELECT') {
+        saveState(target.id, target.value);
+    }
+
+     // Recalcular score si cambia un input numérico de score (también en 'change')
+     if (target.matches('input[type="number"][data-input-type="score"]')) {
+         const section = target.closest('.section');
+         if (section) updateTotalScore(section.id);
+     }
+}
+
+/** Manejador para inputs en textareas, text, number (guarda estado y recalcula score) */
+function handleAppInput(ev) {
+     const target = ev.target;
+
+     // Guardar estado
+     if (target.tagName === 'TEXTAREA' || target.type === 'text' || target.type === 'number') {
+         saveState(target.id, target.value);
+     }
+
+     // Recalcular score si es un input numérico de score
+     if (target.matches('input[type="number"][data-input-type="score"]')) {
+         const section = target.closest('.section');
+         if (section) updateTotalScore(section.id);
+     }
+}
+
+
+/** Manejador para atajos de teclado (hotkeys) */
+function handleHotkeys(e) {
+    // Solo procesar si la tecla Ctrl está presionada y no otras modificadoras (Alt, Meta)
+    if (e.ctrlKey && !e.altKey && !e.metaKey) {
+        const keyMap = { // Mapeo de tecla numérica a ID de sección
+            "1": "updrs1", "2": "updrs2", "3": "updrs3",
+            "4": "updrs4", "5": "parkinsonDiagnosis",
+            "0": "index" // Ctrl+0 para ir al índice
+        };
+        const targetKey = keyMap[e.key]; // Obtener ID de sección según tecla presionada
+
+        if (targetKey) { // Si la tecla corresponde a una sección mapeada
+            e.preventDefault(); // Evitar comportamiento por defecto del navegador
+            showSection(targetKey); // Mostrar la sección correspondiente
+            // Intentar poner foco en el primer input/textarea de la sección
+            const sectionElement = document.getElementById(targetKey);
+            const firstInput = sectionElement?.querySelector('input, textarea, select');
+            if (firstInput) {
+                // Usar setTimeout para asegurar que el foco se aplique después de mostrar la sección
+                setTimeout(() => firstInput.focus(), 100);
+            }
+        }
+    }
+}
+
+/* ══════════ Inicialización ══════════ */
+function initApp() {
+    // Obtener referencias a elementos del modal
+    previewModal = document.getElementById('previewModal');
+    previewText = document.getElementById('previewText');
+    confirmCopyBtn = document.getElementById('confirmCopyBtn');
+    cancelCopyBtn = document.getElementById('cancelCopyBtn');
+
+    // El HTML es estático, no necesitamos renderizarlo dinámicamente
+    loadSavedState(); // Cargar datos guardados en sessionStorage
+    setupEventListeners(); // Configurar todos los listeners de eventos
+    showSection('index'); // Mostrar la sección del índice al iniciar
+    console.log("Aplicación de Escalas Parkinson inicializada.");
+}
+
+// --- Ejecutar Inicialización al cargar el script ---
+initApp();
+
+// No es necesario modificar el HTML directamente, pero asegurémonos de que tenga el elemento de feedback
+// Verificar si existe el elemento de feedback, y si no, añadirlo al final del body
+document.addEventListener("DOMContentLoaded", function() {
+  if (!document.getElementById("feedback-message")) {
+    const feedbackDiv = document.createElement("div");
+    feedbackDiv.id = "feedback-message";
+    feedbackDiv.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.75);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+    `;
+    document.body.appendChild(feedbackDiv);
+    
+    // Añadir estilos para la clase visible
+    const style = document.createElement("style");
+    style.textContent = `
+      #feedback-message.visible {
+        opacity: 1;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+});
+</script>
+
+</body>
+</html>

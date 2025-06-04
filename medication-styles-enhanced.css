@@ -1,0 +1,564 @@
+/**
+ * 💊 Estilos Mejorados para Sección de Medicamentos
+ * Suite Neurología v2.1.0 - Diseño Moderno
+ */
+
+/* === VARIABLES ESPECÍFICAS PARA MEDICAMENTOS === */
+:root {
+  --med-primary: #2563eb;
+  --med-primary-light: #3b82f6;
+  --med-primary-dark: #1d4ed8;
+  --med-secondary: #10b981;
+  --med-warning: #f59e0b;
+  --med-danger: #ef4444;
+  --med-success: #22c55e;
+  
+  --med-bg-primary: #f8fafc;
+  --med-bg-secondary: #f1f5f9;
+  --med-bg-accent: #e0f2fe;
+  --med-bg-hover: #f0f9ff;
+  
+  --med-border: #e2e8f0;
+  --med-border-focus: #3b82f6;
+  --med-border-hover: #64748b;
+  
+  --med-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --med-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --med-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --med-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --med-radius-sm: 6px;
+  --med-radius-md: 8px;
+  --med-radius-lg: 12px;
+  --med-radius-xl: 16px;
+  --med-radius-full: 9999px;
+  
+  --med-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --med-transition-fast: all 0.15s ease-out;
+}
+
+/* === CONTENEDOR PRINCIPAL DE MEDICAMENTOS === */
+.section[data-key="medicacion"] {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid var(--med-border);
+  border-radius: var(--med-radius-lg);
+  box-shadow: var(--med-shadow-sm);
+  transition: var(--med-transition);
+  overflow: hidden;
+}
+
+.section[data-key="medicacion"]:hover {
+  box-shadow: var(--med-shadow-md);
+  border-color: var(--med-border-hover);
+}
+
+/* === HEADER DE MEDICAMENTOS === */
+.section[data-key="medicacion"] .section-header {
+  background: linear-gradient(135deg, var(--med-primary) 0%, var(--med-primary-light) 100%);
+  color: white;
+  padding: 16px 20px;
+  border-radius: var(--med-radius-lg) var(--med-radius-lg) 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.section[data-key="medicacion"] .section-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.section[data-key="medicacion"] .section-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.section[data-key="medicacion"] .section-header h2::before {
+  content: '💊';
+  font-size: 1.5rem;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+/* === CONTENIDO DE LA SECCIÓN === */
+.section[data-key="medicacion"] .section-content {
+  padding: 24px;
+  background: white;
+  border-radius: 0 0 var(--med-radius-lg) var(--med-radius-lg);
+}
+
+/* === CONTENEDOR DE INPUT PRINCIPAL === */
+.medication-input-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.medication-input-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--med-bg-accent) 0%, transparent 100%);
+  border-radius: var(--med-radius-md);
+  opacity: 0;
+  transition: var(--med-transition);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.medication-input-container:focus-within::before {
+  opacity: 1;
+}
+
+/* === INPUT DE MEDICAMENTO === */
+#med-input,
+input[id*="med-input"] {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: 2px solid var(--med-border);
+  border-radius: var(--med-radius-md);
+  background: white;
+  color: #1f2937;
+  transition: var(--med-transition);
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+#med-input:focus,
+input[id*="med-input"]:focus {
+  outline: none;
+  border-color: var(--med-border-focus);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+#med-input::placeholder,
+input[id*="med-input"]::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+/* === SUGERENCIAS DE MEDICAMENTOS === */
+#med-suggestions,
+ul[id*="med-suggestions"] {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  background: white;
+  border: 1px solid var(--med-border);
+  border-radius: var(--med-radius-md);
+  box-shadow: var(--med-shadow-lg);
+  z-index: 1000;
+  overflow-y: auto;
+  display: none;
+  animation: medicationDropdown 0.2s ease-out;
+}
+
+@keyframes medicationDropdown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#med-suggestions li,
+ul[id*="med-suggestions"] li {
+  padding: 12px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #374151;
+  transition: var(--med-transition-fast);
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#med-suggestions li:last-child,
+ul[id*="med-suggestions"] li:last-child {
+  border-bottom: none;
+}
+
+#med-suggestions li:hover,
+ul[id*="med-suggestions"] li:hover {
+  background: linear-gradient(135deg, var(--med-primary) 0%, var(--med-primary-light) 100%);
+  color: white;
+  transform: translateX(4px);
+}
+
+#med-suggestions li::before,
+ul[id*="med-suggestions"] li::before {
+  content: '💊';
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+/* === FORMULARIO DE DOSIS === */
+#dose-form,
+div[id*="dose-form"] {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--med-bg-secondary) 0%, var(--med-bg-primary) 100%);
+  border: 1px solid var(--med-border);
+  border-radius: var(--med-radius-md);
+  box-shadow: var(--med-shadow-sm);
+  transition: var(--med-transition);
+}
+
+#dose-form:hover,
+div[id*="dose-form"]:hover {
+  box-shadow: var(--med-shadow-md);
+  border-color: var(--med-border-hover);
+}
+
+#dose-input,
+input[id*="dose-input"] {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--med-border);
+  border-radius: var(--med-radius-sm);
+  font-size: 0.95rem;
+  font-weight: 500;
+  background: white;
+  transition: var(--med-transition);
+  min-width: 0;
+}
+
+#dose-input:focus,
+input[id*="dose-input"]:focus {
+  outline: none;
+  border-color: var(--med-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* === BOTONES DE ACCIÓN === */
+.action-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: var(--med-radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--med-transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.action-btn:hover::before {
+  left: 100%;
+}
+
+.action-btn:not(.secondary) {
+  background: linear-gradient(135deg, var(--med-success) 0%, #16a34a 100%);
+  color: white;
+  box-shadow: var(--med-shadow-sm);
+}
+
+.action-btn:not(.secondary):hover {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  box-shadow: var(--med-shadow-md);
+  transform: translateY(-1px);
+}
+
+.action-btn.secondary {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  color: #475569;
+  border: 1px solid var(--med-border);
+}
+
+.action-btn.secondary:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+  color: #334155;
+  transform: translateY(-1px);
+}
+
+/* === CONTENEDOR DE CHIPS DE MEDICAMENTOS === */
+.medication-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 20px;
+  min-height: 80px;
+  border: 2px dashed var(--med-border);
+  border-radius: var(--med-radius-md);
+  background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
+  transition: var(--med-transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.medication-chips::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(37, 99, 235, 0.02) 0%, transparent 50%);
+  opacity: 0;
+  transition: var(--med-transition);
+}
+
+.medication-chips:hover {
+  border-color: var(--med-primary);
+  background: linear-gradient(135deg, var(--med-bg-hover) 0%, #f0f9ff 100%);
+  box-shadow: var(--med-shadow-sm);
+}
+
+.medication-chips:hover::before {
+  opacity: 1;
+}
+
+.medication-chips:empty::after {
+  content: '💊 Agregue medicamentos aquí...';
+  color: #9ca3af;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+/* === CHIPS INDIVIDUALES === */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+  border: 1px solid var(--med-border);
+  border-radius: var(--med-radius-full);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  max-width: 100%;
+  word-break: break-word;
+  transition: var(--med-transition);
+  box-shadow: var(--med-shadow-sm);
+  position: relative;
+  overflow: hidden;
+  animation: chipSlideIn 0.3s ease-out;
+}
+
+@keyframes chipSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.chip::before {
+  content: '💊';
+  margin-right: 6px;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.chip:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--med-shadow-md);
+  border-color: var(--med-primary);
+  background: linear-gradient(135deg, #f0f9ff 0%, white 100%);
+}
+
+/* === BOTÓN DE ELIMINAR MEDICAMENTO === */
+.chip .remove-med-btn {
+  background: none;
+  border: none;
+  color: var(--med-danger);
+  font-size: 14px;
+  padding: 0;
+  margin-left: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: var(--med-transition);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.chip .remove-med-btn:hover {
+  opacity: 1;
+  background: var(--med-danger);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.chip .remove-med-btn::before {
+  content: '×';
+  font-weight: bold;
+  line-height: 1;
+}
+
+/* === DISPLAY DE MEDICAMENTOS === */
+#med-display,
+div[id*="med-display"] {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--med-border);
+  min-height: 40px;
+  position: relative;
+}
+
+/* === ESTADOS ESPECIALES === */
+.medication-chips.has-medications {
+  border-style: solid;
+  border-color: var(--med-success);
+  background: linear-gradient(135deg, #f0fdf4 0%, #f7fee7 100%);
+}
+
+.medication-chips.has-medications::before {
+  background: linear-gradient(45deg, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
+  opacity: 1;
+}
+
+/* === ANIMACIONES ADICIONALES === */
+@keyframes medicationPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.medication-chips.adding {
+  animation: medicationPulse 0.6s ease-in-out;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .section[data-key="medicacion"] .section-content {
+    padding: 16px;
+  }
+  
+  #med-input,
+  input[id*="med-input"] {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+  }
+  
+  #dose-form,
+  div[id*="dose-form"] {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .action-btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .chip {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .medication-chips {
+    padding: 16px;
+    gap: 8px;
+  }
+}
+
+/* === MODO OSCURO === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --med-bg-primary: #1e293b;
+    --med-bg-secondary: #334155;
+    --med-bg-accent: #0f172a;
+    --med-bg-hover: #1e293b;
+    --med-border: #475569;
+    --med-border-hover: #64748b;
+  }
+  
+  .section[data-key="medicacion"] {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+  
+  .section[data-key="medicacion"] .section-content {
+    background: #1e293b;
+  }
+  
+  #med-input,
+  input[id*="med-input"],
+  #dose-input,
+  input[id*="dose-input"] {
+    background: #334155;
+    color: #f1f5f9;
+    border-color: #475569;
+  }
+  
+  .chip {
+    background: linear-gradient(135deg, #334155 0%, #475569 100%);
+    color: #f1f5f9;
+    border-color: #64748b;
+  }
+  
+  .medication-chips {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-color: #475569;
+  }
+}
+
+/* === ACCESIBILIDAD === */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* === FOCUS VISIBLE === */
+.chip:focus-visible,
+.action-btn:focus-visible,
+#med-input:focus-visible,
+input[id*="med-input"]:focus-visible {
+  outline: 2px solid var(--med-primary);
+  outline-offset: 2px;
+} 

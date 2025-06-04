@@ -1,0 +1,526 @@
+/**
+ * 🔧 Correcciones Específicas para Problemas Visuales
+ * Suite Neurología v2.1.0 - Estilo Limpio y Estable
+ */
+
+/* === CORRECCIÓN CRÍTICA PARA FONDO NEGRO DE CAMAS === */
+#top-controls,
+.bed-management,
+.glass-effect {
+  background: white !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+#bed-selector,
+#add-bed-btn,
+#remove-bed-btn,
+#clear-current-bed-btn {
+  background: white !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+/* === CORRECCIÓN PARA TEXTO INVISIBLE EN DATOS DEL PACIENTE === */
+.section[data-key="datos"] input,
+.section[data-key="datos"] textarea,
+.section[data-key="datos"] select,
+.section[data-key="datos"] label {
+  color: #1f2937 !important;
+  font-weight: 500 !important;
+}
+
+.section[data-key="datos"] input::placeholder,
+.section[data-key="datos"] textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* === CORRECCIÓN PARA HEADERS QUE SE VUELVEN BLANCOS === */
+.section-header,
+.section-header:hover {
+  background: #f9fafb !important;
+  color: #374151 !important;
+}
+
+.section-header h3,
+.section-header:hover h3 {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+}
+
+/* === CORRECCIÓN ESPECÍFICA PARA CADA SECCIÓN === */
+.section[data-key="medicacion"] .section-header,
+.section[data-key="medicacion"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="medicacion"] .section-header h3,
+.section[data-key="medicacion"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="ingreso_manual"] .section-header,
+.section[data-key="ingreso_manual"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="ingreso_manual"] .section-header h3,
+.section[data-key="ingreso_manual"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="antecedentes_personales"] .section-header,
+.section[data-key="antecedentes_personales"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="antecedentes_personales"] .section-header h3,
+.section[data-key="antecedentes_personales"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="fisico"] .section-header,
+.section[data-key="fisico"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="fisico"] .section-header h3,
+.section[data-key="fisico"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="notas_libres"] .section-header,
+.section[data-key="notas_libres"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="notas_libres"] .section-header h3,
+.section[data-key="notas_libres"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="ia"] .section-header,
+.section[data-key="ia"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="ia"] .section-header h3,
+.section[data-key="ia"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="datos"] .section-header,
+.section[data-key="datos"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="datos"] .section-header h3,
+.section[data-key="datos"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+.section[data-key="evolucion"] .section-header,
+.section[data-key="evolucion"] .section-header:hover {
+  background: #f9fafb !important;
+}
+
+.section[data-key="evolucion"] .section-header h3,
+.section[data-key="evolucion"] .section-header:hover h3 {
+  color: #1f2937 !important;
+}
+
+/* === CORRECCIÓN PARA LABELS Y TEXTO EN GENERAL === */
+.section label,
+.section .input-group label {
+  color: #1f2937 !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+}
+
+/* === CORRECCIÓN PARA PLACEHOLDERS === */
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+}
+
+/* === ELIMINAR TODAS LAS ANIMACIONES PROBLEMÁTICAS === */
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition-duration: 0.15s !important;
+  transform: none !important;
+}
+
+/* === CORRECCIÓN GLOBAL DE INPUTS === */
+input[type="text"],
+input[type="email"], 
+input[type="tel"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  background: white !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  padding: 12px 16px !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  transition: border-color 0.15s ease !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+  box-sizing: border-box !important;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus, 
+input[type="tel"]:focus,
+input[type="date"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  background: white !important;
+  color: #1f2937 !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  outline: none !important;
+  transform: none !important;
+}
+
+/* === ELIMINAR MICRO-BOUNCE Y EFECTOS PROBLEMÁTICOS === */
+.micro-bounce,
+.micro-bounce:hover,
+.micro-bounce:active {
+  transform: none !important;
+  animation: none !important;
+}
+
+.card,
+.card:hover {
+  transform: none !important;
+  animation: none !important;
+}
+
+.version-btn,
+.version-btn:hover,
+.version-btn:active {
+  transform: none !important;
+  animation: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* === CORRECCIÓN PARA BOTONES === */
+button,
+button:hover,
+button:active,
+button:focus {
+  transform: none !important;
+  animation: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+}
+
+/* === CORRECCIÓN PARA SECCIONES === */
+.section,
+.section:hover,
+.section-header,
+.section-header:hover {
+  transform: none !important;
+  animation: none !important;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* === CORRECCIÓN ESPECÍFICA PARA ICONOS DE VOZ === */
+.voice-input-btn {
+  position: absolute !important;
+  right: 8px !important;
+  bottom: 8px !important;
+  background: white !important;
+  border: 1px solid #d1d5db !important;
+  padding: 6px !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  color: #6b7280 !important;
+  border-radius: 4px !important;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
+  z-index: 5 !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.voice-input-btn:hover {
+  background: #f9fafb !important;
+  color: #374151 !important;
+  border-color: #9ca3af !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Para inputs de una línea */
+.input-group {
+  position: relative !important;
+}
+
+.input-group input[type="text"] + .voice-input-btn,
+.input-group input[type="date"] + .voice-input-btn,
+.input-group input[type="tel"] + .voice-input-btn,
+.input-group input[type="email"] + .voice-input-btn {
+  bottom: 50% !important;
+  transform: translateY(50%) !important;
+  right: 8px !important;
+}
+
+.input-group input[type="text"] + .voice-input-btn:hover,
+.input-group input[type="date"] + .voice-input-btn:hover,
+.input-group input[type="tel"] + .voice-input-btn:hover,
+.input-group input[type="email"] + .voice-input-btn:hover {
+  transform: translateY(50%) !important;
+}
+
+/* === CORRECCIÓN PARA INPUTS ESPECÍFICOS POR ID === */
+#fecha_evaluacion,
+#dni,
+#nombre_apellido,
+#obra_social,
+#telefono_email {
+  background: white !important;
+  color: #1f2937 !important;
+  border: 1px solid #d1d5db !important;
+  font-weight: 500 !important;
+}
+
+#fecha_evaluacion:focus,
+#dni:focus,
+#nombre_apellido:focus,
+#obra_social:focus,
+#telefono_email:focus {
+  background: white !important;
+  color: #1f2937 !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* === ELIMINAR EFECTOS DE ESCALA Y BOUNCE === */
+.ripple,
+.ripple:hover,
+.ripple:active {
+  transform: none !important;
+  animation: none !important;
+}
+
+.tooltip,
+.tooltip:hover {
+  transform: none !important;
+  animation: none !important;
+}
+
+/* === CORRECCIÓN PARA MODAL DE CAMAS === */
+.modal-overlay,
+.modal-content,
+.glass-effect {
+  transform: none !important;
+  animation: none !important;
+  transition: opacity 0.15s ease !important;
+}
+
+/* === CORRECCIÓN PARA CHIPS === */
+.chip,
+.chip:hover {
+  transform: none !important;
+  animation: none !important;
+  transition: background-color 0.15s ease, border-color 0.15s ease !important;
+}
+
+/* === CORRECCIÓN PARA FLOATING BUTTONS === */
+.floating-button,
+.floating-button:hover,
+.floating-button:active {
+  transform: none !important;
+  animation: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease !important;
+}
+
+/* === CORRECCIÓN PARA WRAPPERS === */
+.input-wrapper,
+.input-group,
+.form-group,
+.textarea-wrapper {
+  background: transparent !important;
+  position: relative !important;
+}
+
+/* === ELIMINAR TODOS LOS KEYFRAMES PROBLEMÁTICOS === */
+@keyframes fadeInOut {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes chipSlideIn {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes sectionContentFadeIn {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes bounce {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes scaleUpModal {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+@keyframes frameScaleUp {
+  from, to { 
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* === MODO OSCURO CORREGIDO === */
+@media (prefers-color-scheme: dark) {
+  input[type="text"],
+  input[type="email"], 
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
+    background: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #4b5563 !important;
+  }
+  
+  input[type="text"]:focus,
+  input[type="email"]:focus, 
+  input[type="tel"]:focus,
+  input[type="date"]:focus,
+  input[type="number"]:focus,
+  textarea:focus,
+  select:focus {
+    background: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  }
+  
+  .voice-input-btn {
+    background: #4b5563 !important;
+    color: #f9fafb !important;
+    border-color: #6b7280 !important;
+  }
+  
+  .voice-input-btn:hover {
+    background: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #9ca3af !important;
+  }
+}
+
+/* === RESPONSIVE CORREGIDO === */
+@media (max-width: 768px) {
+  .voice-input-btn {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.9rem !important;
+    right: 6px !important;
+    bottom: 6px !important;
+  }
+  
+  .input-group input + .voice-input-btn {
+    right: 6px !important;
+  }
+  
+  input[type="text"],
+  input[type="email"], 
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  textarea,
+  select {
+    padding: 10px 12px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* === ACCESIBILIDAD MEJORADA === */
+.voice-input-btn:focus {
+  outline: 2px solid #6366f1 !important;
+  outline-offset: 2px !important;
+}
+
+/* === PREVENIR CONFLICTOS CON OTROS ESTILOS === */
+.section *,
+.modal-content *,
+.floating-button * {
+  box-sizing: border-box !important;
+}
+
+/* === CORRECCIÓN FINAL PARA CUALQUIER ESTILO RESIDUAL === */
+.section input,
+.section textarea,
+.section select {
+  background-color: white !important;
+  background-image: none !important;
+  background: white !important;
+}
+
+.section input:focus,
+.section textarea:focus,
+.section select:focus {
+  background-color: white !important;
+  background-image: none !important;
+  background: white !important;
+}
+
+/* === ESTABILIZAR TODOS LOS ELEMENTOS === */
+* {
+  will-change: auto !important;
+  backface-visibility: visible !important;
+}
+
+/* === CORRECCIÓN PARA ELEMENTOS QUE CAMBIAN DE TAMAÑO === */
+.modal-content,
+.version-btn,
+.card {
+  width: auto !important;
+  height: auto !important;
+  min-width: unset !important;
+  min-height: unset !important;
+  max-width: unset !important;
+  max-height: unset !important;
+}
+
+/* === ELIMINAR TRANSICIONES EN ELEMENTOS PROBLEMÁTICOS === */
+#top-controls,
+#version-splash,
+.bed-action-btn {
+  transition: none !important;
+  transform: none !important;
+  animation: none !important;
+} 

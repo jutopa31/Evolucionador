@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Función de Copiar</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        textarea { width: 100%; height: 200px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test - Función de Copiar Nota Clínica</h1>
+    
+    <div class="test-section">
+        <h2>1. Verificar que las plantillas están cargadas</h2>
+        <button onclick="testTemplates()">Probar Plantillas</button>
+        <div id="template-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Verificar función buildNote</h2>
+        <button onclick="testBuildNote()">Probar buildNote</button>
+        <div id="buildnote-result"></div>
+        <textarea id="note-output" placeholder="La nota aparecerá aquí..."></textarea>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Verificar estado de la aplicación</h2>
+        <button onclick="testAppState()">Verificar AppState</button>
+        <div id="appstate-result"></div>
+    </div>
+
+    <script src="medications.js"></script>
+    <script src="error-ui.js"></script>
+    <script src="api-error-handler.js"></script>
+    <script src="miastenia-gravis.js"></script>
+    <script src="plantillas-examen-fisico.js"></script>
+    <script src="app.js"></script>
+    
+    <script>
+        function testTemplates() {
+            const result = document.getElementById('template-result');
+            
+            if (typeof window.FISICO_TEMPLATES !== 'undefined') {
+                const templates = Object.keys(window.FISICO_TEMPLATES);
+                result.innerHTML = `<div class="test-result success">✅ Plantillas cargadas: ${templates.join(', ')}</div>`;
+                
+                // Mostrar contenido de las plantillas
+                templates.forEach(key => {
+                    result.innerHTML += `<div class="test-result"><strong>${key}:</strong> ${window.FISICO_TEMPLATES[key].substring(0, 100)}...</div>`;
+                });
+            } else {
+                result.innerHTML = '<div class="test-result error">❌ FISICO_TEMPLATES no está definido</div>';
+            }
+        }
+        
+        function testBuildNote() {
+            const result = document.getElementById('buildnote-result');
+            const output = document.getElementById('note-output');
+            
+            try {
+                // Verificar que buildNote existe
+                if (typeof buildNote !== 'function') {
+                    result.innerHTML = '<div class="test-result error">❌ Función buildNote no encontrada</div>';
+                    return;
+                }
+                
+                // Intentar construir una nota
+                const note = buildNote();
+                output.value = note;
+                
+                if (note && note.length > 0 && !note.startsWith('Error:')) {
+                    result.innerHTML = '<div class="test-result success">✅ buildNote ejecutada correctamente</div>';
+                } else {
+                    result.innerHTML = `<div class="test-result warning">⚠️ buildNote retornó: ${note}</div>`;
+                }
+                
+            } catch (error) {
+                result.innerHTML = `<div class="test-result error">❌ Error ejecutando buildNote: ${error.message}</div>`;
+            }
+        }
+        
+        function testAppState() {
+            const result = document.getElementById('appstate-result');
+            
+            try {
+                if (typeof window.AppState !== 'undefined') {
+                    const bedCount = Object.keys(window.AppState.beds || {}).length;
+                    const currentBed = window.AppState.currentBedId;
+                    
+                    result.innerHTML = `
+                        <div class="test-result success">✅ AppState existe</div>
+                        <div class="test-result">Número de camas: ${bedCount}</div>
+                        <div class="test-result">Cama actual: ${currentBed}</div>
+                        <div class="test-result">IA habilitada: ${window.AppState.aiEnabled}</div>
+                    `;
+                    
+                    if (bedCount > 0 && currentBed) {
+                        const bedData = window.AppState.beds[currentBed];
+                        result.innerHTML += `<div class="test-result">Datos de cama actual: ${JSON.stringify(bedData, null, 2).substring(0, 200)}...</div>`;
+                    }
+                } else {
+                    result.innerHTML = '<div class="test-result error">❌ window.AppState no está definido</div>';
+                }
+                
+            } catch (error) {
+                result.innerHTML = `<div class="test-result error">❌ Error verificando AppState: ${error.message}</div>`;
+            }
+        }
+        
+        // Ejecutar tests automáticamente cuando la página cargue
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                testTemplates();
+                testAppState();
+            }, 2000); // Esperar 2 segundos para que la app se inicialice
+        });
+    </script>
+</body>
+</html> 
