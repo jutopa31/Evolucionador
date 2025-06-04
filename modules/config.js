@@ -1,13 +1,13 @@
 /**
  * @fileoverview Configuración y carga de módulos para Suite Neurología
- * @version 2.0.0
+ * @version 2.1.0
  */
 
 /**
  * Configuración de la aplicación
  */
 export const AppConfig = {
-  version: "2.0.0",
+  version: "2.1.0",
   name: "Suite Neurología",
   
   // Configuración de logging

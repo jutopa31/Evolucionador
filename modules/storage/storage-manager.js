@@ -1,6 +1,6 @@
 /**
  * @fileoverview Módulo de gestión de almacenamiento
- * @version 2.0.0 - OPTIMIZADO
+ * @version 2.1.0 - OPTIMIZADO
  */
 
 import { logger } from '../core/logger.js';

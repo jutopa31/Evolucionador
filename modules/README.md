@@ -1,4 +1,4 @@
-# Módulos de Suite Neurología v2.0.0
+# Módulos de Suite Neurología v2.1.0
 
 ## Arquitectura Modular Optimizada
 
@@ -228,7 +228,7 @@ La arquitectura modular mantiene compatibilidad completa con el código existent
 
 ## Versión
 
-**v2.0.0** - Arquitectura modular completa con compatibilidad total 
+**v2.1.0** - Arquitectura modular completa con compatibilidad total 
 
 ## 🚀 Optimizaciones Implementadas (Paso 2)
 
@@ -399,4 +399,4 @@ console.log('Tamaño de cache:', stats.cacheSize);
 
 ---
 
-**Suite Neurología v2.0.0** - Arquitectura modular optimizada para máximo rendimiento y mantenibilidad. 
+**Suite Neurología v2.1.0** - Arquitectura modular optimizada para máximo rendimiento y mantenibilidad. 
