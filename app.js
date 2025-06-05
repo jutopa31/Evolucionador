@@ -808,104 +808,81 @@
     }
   }
 
+  // Secciones que siempre deben incluirse en la nota
+  const alwaysIncludeSections = ["fisico", "notas_libres", "medicacion", "antecedentes"];
+
   /**
    * Construye la nota completa para la cama actual basándose en el estado.
    * @returns {string} La nota formateada o un mensaje de error.
    */
   function buildNote() {
-    const bedId = appState.getCurrentBedId();
-    const bd = appState.getBed(bedId);
-    if (!bedId || !bd) {
-      logDebug("buildNote: Error: Cama no seleccionada al construir nota.");
-      return "Error: Cama no seleccionada.";
+    // Guardar los datos de la UI antes de construir la nota
+    const currentBedId = window.AppState.currentBedId;
+    if (!currentBedId) {
+      Logger.error("buildNote: No hay cama actual seleccionada");
+      return "Error: No hay cama seleccionada.";
     }
 
-    // Lista de secciones que deben excluirse completamente
-    const excludedSections = ["ingreso_manual", "diagnostico"] // 'diagnostico' no está en Sections, pero se mantiene
-    // Secciones que siempre se deben incluir incluso vacías
-    const alwaysIncludeSections = ["fisico", "notas_libres", "medicacion", "antecedentes"]
+    // Guardar datos de la UI y forzar guardado inmediato
+    saveUIToCurrentBedData(currentBedId);
+    StorageManager.saveAllBedData();
+    
+    const bd = window.AppState.beds[currentBedId];
+    if (!bd) {
+      Logger.error("buildNote: No se encontraron datos para la cama actual");
+      return "Error: No se encontraron datos para la cama actual.";
+    }
+
+    // Asegurar que las propiedades existan
+    if (!bd.text) bd.text = {};
+    if (!bd.structured) bd.structured = {};
+
+    Logger.debug("buildNote: Construyendo nota para cama " + currentBedId);
 
     const sectionsText = SectionRenderOrder.map((k) => {
-      // Excluir las secciones no deseadas
-      if (excludedSections.includes(k)) {
-        logDebug(`buildNote: Sección "${k}" excluida.`)
-        return null // Saltar esta sección
-      }
-
-      const sc = Sections.find((s) => s.key === k)
-      // Obtener etiqueta, por defecto capitalizada si no está en Sections
-      const l = sc ? sc.label : k === "medicacion" ? "Medicación" : k[0].toUpperCase() + k.slice(1)
-
-      // Manejo específico de la sección de medicación
+      // Etiqueta especial para Medicacion
+      let l = Sections.find(s => s.key === k)?.label || (k === "medicacion" ? "Medicacion" : k);
       if (k === "medicacion") {
-        const meds = Array.isArray(bd.meds) && bd.meds.length > 0 ? "- " + bd.meds.join("\n- ") : "(Ninguna)"
-        logDebug(`buildNote: Construyendo sección "${k}": ${meds.substring(0, 50)}...`)
-        return `${l}:\n${meds}`
+        // Mostrar todos los medicamentos agregados, incluyendo dosis/frecuencia
+        const meds = Array.isArray(bd.meds) && bd.meds.length > 0 ? bd.meds.map(m => `- ${m}`).join("\n") : "(Ninguna)";
+        Logger.debug(`buildNote: Construyendo sección "${k}": ${meds.substring(0, 50)}...`);
+        return `${l}:\n${meds}`;
       }
       // Manejo de secciones estructuradas
-      else if (StructuredFields[k]) {
-        const flds = StructuredFields[k]
-        const sData = bd.structured?.[k] || {}
-
-        // Verificar si todos los campos de la sección estructurada están vacíos (ignorando solo espacios)
-        const allEmpty = flds.every((f) => !sData[f.id] || String(sData[f.id]).trim() === "")
-        logDebug(`buildNote: Sección estructurada "${k}": todos vacíos? ${allEmpty}`)
-
-        // Si la sección NO debe incluirse siempre y está vacía, retornar null
+      if (StructuredFields[k]) {
+        const allEmpty = StructuredFields[k].every(f => {
+          const value = bd.structured[k]?.[f.id] || '';
+          return !value || value.trim() === '';
+        });
+        Logger.debug(`buildNote: Sección estructurada "${k}": todos vacíos? ${allEmpty}`);
         if (allEmpty && !alwaysIncludeSections.includes(k)) {
-          return null
+          return null;
         }
-
-        let sTxt = `${l}:\n`
-        let hasMeaningfulContent = false // Para saber si *algún* campo con valor no vacío fue incluido
-
-        flds.forEach((f) => {
-          const value = sData[f.id] || ""
-          // Incluir campos con valor (ignorando solo espacios), o incluir siempre si la sección debe incluirse siempre
-          // Nota: Para secciones alwaysInclude, incluso campos vacíos con sus labels se añadirán aquí.
-          if (String(value).trim() !== "" || alwaysIncludeSections.includes(k)) {
-            sTxt += `   - ${f.label}: ${value}` + "\n"
-            if (String(value).trim() !== "") {
-              hasMeaningfulContent = true // Hay contenido real
-            }
-          }
-        })
-
-        // Si la sección debe incluirse siempre, la retornamos.
-        // Si no debe incluirse siempre, la retornamos SÓLO si tiene contenido REAL (ignorar solo label con campo vacío).
-        if (alwaysIncludeSections.includes(k)) {
-          // Incluso si solo tenía el encabezado y campos vacíos, se retorna sTxt.trim()
-          logDebug(`buildNote: Sección "${k}" (estructurada, siempre incluida) construida.`)
-          return sTxt.trim()
-        } else {
-          // Para secciones condicionales, solo retornar si hubo contenido real
-          logDebug(
-            `buildNote: Sección "${k}" (estructurada, condicional) construida. Tiene contenido REAL? ${hasMeaningfulContent}`,
-          )
-          return hasMeaningfulContent ? sTxt.trim() : null
-        }
+        const sectionText = StructuredFields[k]
+          .map(f => {
+            const value = bd.structured[k]?.[f.id] || '';
+            return value.trim() ? `${f.label}: ${value.trim()}` : null;
+          })
+          .filter(Boolean)
+          .join('\n');
+        return sectionText ? `${l}:\n${sectionText}` : null;
       }
-      // Manejo de secciones de texto libre (textarea)
+      // Manejo de secciones de texto libre
       else {
-        const txt = bd.text?.[k] || ""
-        logDebug(
-          `buildNote: Sección de texto "${k}": contenido "${txt.trim().substring(0, Math.min(txt.trim().length, 50))}"...`,
-        )
-
-        // Incluir siempre ciertas secciones de texto aunque estén vacías
+        const txt = bd.text[k] || '';
+        Logger.debug(`buildNote: Sección de texto "${k}": contenido "${txt.trim().substring(0, Math.min(txt.trim().length, 50))}..."`);
         if (alwaysIncludeSections.includes(k)) {
-          return `${l}:\n${txt.trim()}`
+          return `${l}:\n${txt.trim()}`;
         } else {
-          // Solo incluir secciones de texto con contenido (ignorando solo espacios)
-          return txt.trim() !== "" ? `${l}:\n${txt.trim()}` : null
+          return txt.trim() ? `${l}:\n${txt.trim()}` : null;
         }
       }
     })
-      .filter((section) => section !== null) // Eliminar secciones nulas (vacías o excluidas condicionalmente)
-      .join("\n\n") // Unir secciones con doble salto de línea
+    .filter(Boolean)
+    .join('\n\n');
 
-    logDebug("buildNote: Nota completa construida.")
-    return sectionsText
+    Logger.debug("buildNote: Nota completa construida");
+    return sectionsText;
   }
 
   /** Descarga la nota actual como un archivo .txt */
@@ -1199,7 +1176,8 @@
         StructuredFields[s.key].forEach((f) => {
           const i = getStructuredInput(s.key, f.id, bedIdToSave); 
           if (i) {
-            bd.structured[s.key][f.id] = i.value;
+            bd.structured[s.key][f.id] = i.value || '';
+            Logger.debug(`Guardando campo estructurado ${s.key}.${f.id}: "${bd.structured[s.key][f.id]}"`);
           } else {
             Logger.warn(`Input no encontrado al guardar: ${s.key}.${f.id} para cama ${bedIdToSave}`);
           }
@@ -1207,7 +1185,8 @@
       } else {
         const t = getTextArea(s.key, bedIdToSave); 
         if (t) {
-          bd.text[s.key] = t.value;
+          bd.text[s.key] = t.value || '';
+          Logger.debug(`Guardando texto para sección ${s.key}: "${bd.text[s.key].substring(0, Math.min(bd.text[s.key].length, 50))}..."`);
         } else {
           if (s.key !== 'medicacion' && s.key !== 'ingreso_manual' && s.key !== 'datos') {
             Logger.warn(`Textarea no encontrado al guardar: ${s.key} para cama ${bedIdToSave}`);
@@ -1215,6 +1194,10 @@
         }
       }
     });
+
+    // Guardar inmediatamente en el almacenamiento
+    StorageManager.saveAllBedData();
+    
     Logger.debug(`saveUIToCurrentBedData: Datos de UI guardados en el estado para cama ${bedIdToSave}.`);
   }
 
