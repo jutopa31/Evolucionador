@@ -1,5 +1,5 @@
 /**
- * @fileoverview Ejecutor principal de tests para Suite Neurología v2.0.0
+ * @fileoverview Ejecutor principal de tests para Suite Neurología v2.1.0
  * @version 1.0.0
  */
 
@@ -135,7 +135,7 @@ async function generateHtmlReport(results) {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Reporte de Tests - Suite Neurología v2.0.0</title>
+      <title>Reporte de Tests - Suite Neurología v2.1.0</title>
       <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .header { background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
@@ -152,7 +152,7 @@ async function generateHtmlReport(results) {
     </head>
     <body>
       <div class="header">
-        <h1>🧪 Reporte de Tests - Suite Neurología v2.0.0</h1>
+        <h1>🧪 Reporte de Tests - Suite Neurología v2.1.0</h1>
         <p>Generado el: ${new Date().toLocaleString()}</p>
       </div>
       
@@ -203,7 +203,7 @@ async function generateJsonReport(results) {
   
   const report = {
     timestamp: new Date().toISOString(),
-    version: '2.0.0',
+    version: '2.1.0',
     summary: {
       total: results.total,
       passed: results.passed,

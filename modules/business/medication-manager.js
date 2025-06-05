@@ -1,6 +1,6 @@
 /**
  * @fileoverview Gestión de medicamentos
- * @version 2.0.0
+ * @version 2.1.0
  */
 
 import { logger } from '../core/logger.js';

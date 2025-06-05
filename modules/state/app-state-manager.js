@@ -1,6 +1,6 @@
 /**
  * @fileoverview Gestor de estado centralizado de la aplicación
- * @version 2.0.0
+ * @version 2.1.0
  */
 
 import { logger } from '../core/logger.js';
