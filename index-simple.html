@@ -247,6 +247,98 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
+
+        /* Floating Action Buttons */
+        #floating-actions-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .floating-button-container {
+            position: relative;
+        }
+
+        .floating-button-container ul.menu {
+            position: absolute;
+            bottom: calc(100% + 5px);
+            right: 0;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+        }
+
+        .floating-button-container ul.menu li {
+            padding: 8px 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .floating-button-container ul.menu li:hover {
+            background: #f0f0f0;
+        }
+
+        .floating-button {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        #actions-btn-floating { background: #6c757d; }
+        #copy-btn-floating { background: #007bff; }
+        #scales-btn-floating { background: #28a745; }
+
+        /* Scale Overlay */
+        #scale-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #scale-container {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            height: 90%;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #scale-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        #scale-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
         
         @media (max-width: 768px) {
             .version-buttons {
@@ -283,6 +375,27 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="floating-actions-container" style="display:none;">
+        <div id="actions-container" class="floating-button-container">
+            <button id="actions-btn-floating" class="floating-button" title="Acciones">⚙️</button>
+            <ul id="actions-list" class="menu"></ul>
+        </div>
+        <div class="floating-button-container">
+            <button id="copy-btn-floating" class="floating-button" title="Copiar Nota">📋</button>
+        </div>
+        <div id="scales-btn-container" class="floating-button-container">
+            <button id="scales-btn-floating" class="floating-button" title="Abrir Escalas">⚖️</button>
+            <ul id="scales-list" class="menu"></ul>
+        </div>
+    </div>
+
+    <div id="scale-overlay">
+        <div id="scale-container">
+            <button id="scale-close">×</button>
+            <iframe id="scale-frame" src="about:blank"></iframe>
         </div>
     </div>
 
@@ -355,6 +468,11 @@
                 
                 setupSimpleVersionListeners();
                 loadSavedNote();
+                const floatContainer = document.getElementById('floating-actions-container');
+                if (floatContainer) {
+                    floatContainer.style.display = 'flex';
+                }
+                setupFloatingButtons();
                 console.log('✅ Versión simple cargada correctamente');
             }
         }
@@ -438,16 +556,7 @@
                 });
             }
             
-            function showStatus(message, type) {
-                if (statusDiv) {
-                    statusDiv.textContent = message;
-                    statusDiv.className = 'status-message status-' + type;
-                    statusDiv.style.display = 'block';
-                    setTimeout(() => {
-                        statusDiv.style.display = 'none';
-                    }, 3000);
-                }
-            }
+            // Utilizar función global para mostrar mensajes de estado
         }
         
         // Cargar nota guardada
@@ -459,6 +568,159 @@
                 console.log('📄 Nota guardada cargada');
             }
         }
+
+        // Mostrar mensajes de estado de forma global
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            if (statusDiv) {
+                statusDiv.textContent = message;
+                statusDiv.className = 'status-message status-' + type;
+                statusDiv.style.display = 'block';
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Configurar botones flotantes y menús
+        function setupFloatingButtons() {
+            const copyFloat = document.getElementById('copy-btn-floating');
+            const actionsBtn = document.getElementById('actions-btn-floating');
+            const actionsList = document.getElementById('actions-list');
+            const scalesBtn = document.getElementById('scales-btn-floating');
+            const scalesList = document.getElementById('scales-list');
+
+            if (copyFloat) {
+                copyFloat.addEventListener('click', function() {
+                    const ta = document.getElementById('simple-note');
+                    if (ta && ta.value.trim()) {
+                        navigator.clipboard.writeText(ta.value).then(() => {
+                            showStatus('📋 Nota copiada', 'success');
+                        });
+                    }
+                });
+            }
+
+            if (actionsBtn) {
+                actionsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    actionsList.style.display = actionsList.style.display === 'block' ? 'none' : 'block';
+                    scalesList.style.display = 'none';
+                });
+            }
+
+            if (scalesBtn) {
+                scalesBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    scalesList.style.display = scalesList.style.display === 'block' ? 'none' : 'block';
+                    actionsList.style.display = 'none';
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.floating-button-container')) {
+                    actionsList.style.display = 'none';
+                    scalesList.style.display = 'none';
+                }
+            });
+
+            // Acciones disponibles
+            actionsList.innerHTML = '';
+            const downLi = document.createElement('li');
+            downLi.textContent = '📥 Descargar Nota';
+            downLi.addEventListener('click', function() {
+                downloadNote();
+                actionsList.style.display = 'none';
+            });
+            actionsList.appendChild(downLi);
+
+            // Escalas
+            scalesList.innerHTML = '';
+            const labels = {
+                parkinson: '🧠 Parkinson',
+                miastenia: '💪 Miastenia Gravis',
+                nihss: '🧮 NIHSS',
+                espasticidad: '🦵 Espasticidad',
+                aspects: '🧠 ASPECTS',
+                ela: '🧠 ELA'
+            };
+            Object.keys(labels).forEach(function(key) {
+                const li = document.createElement('li');
+                li.textContent = labels[key];
+                li.addEventListener('click', function() {
+                    openScale(key);
+                    scalesList.style.display = 'none';
+                });
+                scalesList.appendChild(li);
+            });
+
+            const closeBtn = document.getElementById('scale-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', closeScaleOverlay);
+            }
+        }
+
+        // Descargar nota como archivo de texto
+        function downloadNote() {
+            const ta = document.getElementById('simple-note');
+            if (!ta || !ta.value) {
+                alert('Nota vacía');
+                return;
+            }
+            const blob = new Blob([ta.value], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nota_' + new Date().toISOString().slice(0, 10) + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Abrir overlay con escala
+        function openScale(type) {
+            const map = {
+                parkinson: 'parkinson.html',
+                miastenia: 'miastenia-gravis.html',
+                nihss: 'nihss.html',
+                espasticidad: 'espasticidad.html',
+                aspects: 'aspects.html',
+                ela: 'ELA.html'
+            };
+            const overlay = document.getElementById('scale-overlay');
+            const frame = document.getElementById('scale-frame');
+            if (overlay && frame && map[type]) {
+                frame.src = map[type];
+                overlay.style.display = 'flex';
+            }
+        }
+
+        function closeScaleOverlay() {
+            const overlay = document.getElementById('scale-overlay');
+            const frame = document.getElementById('scale-frame');
+            if (overlay && frame) {
+                overlay.style.display = 'none';
+                frame.src = 'about:blank';
+            }
+        }
+
+        // Escuchar mensajes desde las escalas
+        window.addEventListener('message', function(event) {
+            if (!event.data) return;
+            if (typeof event.data.text === 'string') {
+                const ta = document.getElementById('simple-note');
+                if (ta) {
+                    const sep = ta.value.trim() ? '\n\n' : '';
+                    ta.value += sep + event.data.text;
+                    ta.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                closeScaleOverlay();
+            }
+            if (event.data.type && event.data.type.startsWith('close')) {
+                closeScaleOverlay();
+            }
+        });
         
         // Función para configurar event listeners
         function setupEventListeners() {
@@ -513,17 +775,9 @@
             
             setupEventListeners();
             
-            // Verificar si hay una versión guardada
-            const savedVersion = localStorage.getItem('selectedVersion');
-            if (savedVersion === 'simple') {
-                console.log('📝 Versión simple guardada detectada, cargando...');
-                setTimeout(showSimpleVersion, 100);
-            } else {
-                console.log('🔍 Mostrando modal de selección de versión');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            }
+            // Cargar directamente la versión simple sin mostrar el modal
+            console.log('📝 Cargando versión simple por defecto...');
+            showSimpleVersion();
             
             console.log('✅ Aplicación inicializada correctamente');
         }
