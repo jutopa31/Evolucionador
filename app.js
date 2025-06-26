@@ -4146,6 +4146,15 @@ Plan:`;
         if (modal) modal.style.display = 'flex';
       });
     }
+
+    // Manejar la apertura de la sección de medicación en la versión simple
+    const medHeader = document.querySelector('.section-header[data-key="medicacion"]');
+    const medContent = document.getElementById(`content-medicacion-${appState.getCurrentBedId()}`);
+    if (medHeader && medContent) {
+      medHeader.addEventListener('click', () => {
+        medContent.style.display = medContent.style.display === 'none' ? 'block' : 'none';
+      });
+    }
   }
 
   function renderComplexVersionUI() {
