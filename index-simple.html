@@ -775,17 +775,9 @@
             
             setupEventListeners();
             
-            // Verificar si hay una versión guardada
-            const savedVersion = localStorage.getItem('selectedVersion');
-            if (savedVersion === 'simple') {
-                console.log('📝 Versión simple guardada detectada, cargando...');
-                setTimeout(showSimpleVersion, 100);
-            } else {
-                console.log('🔍 Mostrando modal de selección de versión');
-                if (modal) {
-                    modal.style.display = 'flex';
-                }
-            }
+            // Cargar directamente la versión simple sin mostrar el modal
+            console.log('📝 Cargando versión simple por defecto...');
+            showSimpleVersion();
             
             console.log('✅ Aplicación inicializada correctamente');
         }
