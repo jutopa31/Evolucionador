@@ -833,6 +833,12 @@
       return "Error: No se encontraron datos para la cama actual.";
     }
 
+    if (window.AppState.version === 'simple') {
+      const text = document.getElementById('simple-note')?.value || '';
+      const meds = Array.isArray(bd.meds) && bd.meds.length > 0 ? bd.meds.map(m => `- ${m}`).join('\n') : '(Ninguna)';
+      return `${text.trim()}\n\nMedicación:\n${meds}`.trim();
+    }
+
     // Asegurar que las propiedades existan
     if (!bd.text) bd.text = {};
     if (!bd.structured) bd.structured = {};
@@ -3059,6 +3065,7 @@
 
     // Guardar la versión seleccionada
     StorageManager.setItem(StorageManager.KEYS.SELECTED_VERSION, version);
+    window.AppState.version = version;
     logDebug(`renderVersionUI: Versión seleccionada guardada: ${version}`);
 
     // Cargar preferencia de AI
@@ -3077,7 +3084,16 @@
 
     if (version === "simple") {
       logDebug("renderVersionUI: Renderizando versión simple.");
-        renderSimpleVersionUI();
+      renderSimpleVersionUI();
+      setupApiModalListeners();
+      setupOcrInputListeners();
+      setupGlobalEventListeners();
+      setupHotkeys();
+      initializeModals();
+      setupPkOverlayListeners();
+      window.AppState.initialized = true;
+      Logger.info('Aplicación inicializada (versión simple).');
+      EventManager.emit('appInitialized', { success: true });
     } else {
       logDebug("renderVersionUI: Renderizando versión compleja.");
       try {
@@ -3258,7 +3274,9 @@
         }
 
         // Insertar el texto en el textarea
-        const textarea = document.getElementById(`ta-notas_libres-${bedId}`)
+        const textarea = window.AppState.version === 'simple'
+            ? document.getElementById('simple-note')
+            : document.getElementById(`ta-notas_libres-${bedId}`)
         if (textarea) {
             textarea.value = text
             window.ErrorUI?.showSuccess?.("Texto extraído exitosamente", 3000)
@@ -4016,24 +4034,132 @@ function setupOcrInputListeners() {
   // Llamar al inicio
   ensureAtLeastOneBed();
 
+  const NOTE_TEMPLATE =
+`Paciente:
+Edad:
+Motivo de consulta:
+Antecedentes:
+Examen físico:
+Diagnóstico:
+Plan:`;
+
   function renderSimpleVersionUI() {
     logDebug("renderSimpleVersionUI: Iniciando renderizado de versión simple");
-    
-    // Ocultar elementos de la versión compleja
-    const complexElements = document.querySelectorAll(".complex-version");
-    complexElements.forEach(el => el.style.display = "none");
-    
-    // Mostrar elementos de la versión simple
-    const simpleElements = document.querySelectorAll(".simple-version");
-    simpleElements.forEach(el => el.style.display = "block");
-    
-    // Ocultar contenedor de botones flotantes
+
+    const app = document.getElementById("app");
+    if (!app) {
+      console.error("renderSimpleVersionUI: Elemento #app no encontrado.");
+      return;
+    }
+
+    const bedId = appState.getCurrentBedId();
+    app.innerHTML = `
+      <div class="simple-version-container simple-version">
+        <h1 class="app-title">📝 Suite Neurología 2.1 - Versión Simple</h1>
+        <div class="note-container">
+          <label for="simple-note">Nota de Evolución:</label>
+          <div class="ocr-controls" style="margin-bottom:10px;display:flex;gap:8px;align-items:center;">
+            <button type="button" id="ocr-upload-btn-${bedId}" class="btn-secondary" title="Subir imagen o PDF para extraer texto">📷 OCR</button>
+            <input type="file" id="ocr-file-input-${bedId}" accept="image/*,application/pdf" style="display:none;">
+          </div>
+          <textarea id="simple-note"></textarea>
+          <div class="actions">
+            <button id="copy-note" class="btn-primary">📋 Copiar Nota</button>
+            <button id="clear-note" class="btn-secondary">🗑️ Limpiar</button>
+            <button id="change-version" class="btn-success">🔄 Cambiar Versión</button>
+          </div>
+          <div id="status-message" style="display:none;"></div>
+        </div>
+      </div>`;
+
+    const container = app.querySelector('.simple-version-container');
+    if (container) {
+      container.appendChild(makeMedicationSection());
+    }
+
+    setupSimpleVersionListeners();
+
+    const textarea = document.getElementById('simple-note');
+    if (textarea) {
+      textarea.value = localStorage.getItem('simple-note-content') || NOTE_TEMPLATE;
+    }
+
     const floatingContainer = document.getElementById("floating-actions-container");
     if (floatingContainer) {
         floatingContainer.style.display = "none";
     }
-    
+
     logDebug("renderSimpleVersionUI: Versión simple renderizada");
+  }
+
+  function setupSimpleVersionListeners() {
+    const textarea = document.getElementById('simple-note');
+    const copyBtn = document.getElementById('copy-note');
+    const clearBtn = document.getElementById('clear-note');
+    const changeBtn = document.getElementById('change-version');
+    const statusDiv = document.getElementById('status-message');
+
+    if (textarea) {
+      textarea.addEventListener('input', () => {
+        localStorage.setItem('simple-note-content', textarea.value);
+        if (statusDiv) {
+          statusDiv.textContent = '💾 Guardado automáticamente';
+          statusDiv.className = 'status-message status-info';
+          statusDiv.style.display = 'block';
+          setTimeout(() => { statusDiv.style.display = 'none'; }, 2000);
+        }
+      });
+    }
+
+    if (copyBtn && textarea) {
+      copyBtn.addEventListener('click', () => {
+        const text = textarea.value.trim();
+        if (text) {
+          navigator.clipboard.writeText(text).then(() => {
+            copyBtn.innerHTML = '✅ ¡Copiado!';
+            if (statusDiv) {
+              statusDiv.textContent = '📋 Nota copiada al portapapeles';
+              statusDiv.className = 'status-message status-success';
+              statusDiv.style.display = 'block';
+              setTimeout(() => { statusDiv.style.display = 'none'; }, 2000);
+            }
+            setTimeout(() => { copyBtn.innerHTML = '📋 Copiar Nota'; }, 2000);
+          });
+        }
+      });
+    }
+
+    if (clearBtn && textarea) {
+      clearBtn.addEventListener('click', () => {
+        if (confirm('¿Está seguro de que desea limpiar la nota?')) {
+          textarea.value = '';
+          localStorage.removeItem('simple-note-content');
+          textarea.focus();
+          if (statusDiv) {
+            statusDiv.textContent = '🗑️ Nota limpiada';
+            statusDiv.className = 'status-message status-info';
+            statusDiv.style.display = 'block';
+            setTimeout(() => { statusDiv.style.display = 'none'; }, 2000);
+          }
+        }
+      });
+    }
+
+    if (changeBtn) {
+      changeBtn.addEventListener('click', () => {
+        const modal = document.getElementById('version-splash');
+        if (modal) modal.style.display = 'flex';
+      });
+    }
+
+    // Manejar la apertura de la sección de medicación en la versión simple
+    const medHeader = document.querySelector('.section-header[data-key="medicacion"]');
+    const medContent = document.getElementById(`content-medicacion-${appState.getCurrentBedId()}`);
+    if (medHeader && medContent) {
+      medHeader.addEventListener('click', () => {
+        medContent.style.display = medContent.style.display === 'none' ? 'block' : 'none';
+      });
+    }
   }
 
   function renderComplexVersionUI() {
